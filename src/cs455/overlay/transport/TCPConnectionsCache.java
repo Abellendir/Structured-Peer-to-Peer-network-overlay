@@ -1,8 +1,8 @@
 package cs455.overlay.transport;
 
-public class TCPConnecctionsCache {
+public class TCPConnectionsCache {
 
-	public TCPConnecctionsCache() {
+	public TCPConnectionsCache() {
 		// TODO Auto-generated constructor stub
 	}
 

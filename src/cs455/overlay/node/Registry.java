@@ -3,12 +3,18 @@
  */
 package cs455.overlay.node;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+
 /**
  * 
  * @author Adam Bellendir
  *
  */
-public class Registry extends Node {
+public class Registry implements Node {
+	
+	private int registryPortNumber;
+	private static ServerSocket serverSocket;
 	
 	/**
 	 * 
@@ -46,11 +52,25 @@ public class Registry extends Node {
 		
 	}
 	
+	public void run() {
+		
+	}
+	
+	public static void openServerSocket(int PortNumber) throws IOException {
+		serverSocket = new ServerSocket(PortNumber);
+	}
 	/**
 	 * 
 	 * @param args
 	 */
 	public static void main(String [] args) {
-		String registryPortNumber = args[1];
+		int registryPortNumber = Integer.parseInt(args[1]);
+		try {
+			openServerSocket(registryPortNumber);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 }

@@ -7,7 +7,7 @@ package cs455.overlay.node;
  * @author Adam Bellendir
  *
  */
-public class MessagingNode extends Node {
+public class MessagingNode implements Node {
 
 	/**
 	 * 
@@ -30,6 +30,9 @@ public class MessagingNode extends Node {
 		
 	}
 	
+	public void run() {
+		
+	}
 	/**
 	 * 
 	 * @param args

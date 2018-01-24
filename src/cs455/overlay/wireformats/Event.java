@@ -4,7 +4,7 @@ import java.io.IOException;
 
 /**
  * 
- * @author Chemical
+ * @author Adam Bellendir
  *
  */
 public interface Event {
@@ -20,7 +20,7 @@ public interface Event {
 	/**
 	 * 
 	 */
-	public static getType() {
+	public static  getType() {
 		return null;
 	}
 }

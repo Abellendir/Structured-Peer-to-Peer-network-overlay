@@ -8,6 +8,10 @@ package cs455.overlay.node;
  *
  */
 public class MessagingNode implements Node {
+	
+	private int sendTracker = 0;
+	private int receiveTracker = 0;
+	
 
 	/**
 	 * 
@@ -30,9 +34,13 @@ public class MessagingNode implements Node {
 		
 	}
 	
+	/**
+	 * 
+	 */
 	public void run() {
 		
 	}
+	
 	/**
 	 * 
 	 * @param args

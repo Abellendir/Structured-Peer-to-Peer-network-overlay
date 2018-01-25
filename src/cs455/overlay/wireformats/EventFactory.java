@@ -9,11 +9,26 @@ package cs455.overlay.wireformats;
  */
 public class EventFactory {
 
+	private static EventFactory eventFactory = null;
+
 	/**
 	 * 
 	 */
-	public EventFactory() {
-		// TODO Auto-generated constructor stub
+	private EventFactory() {
+
+	}
+
+	/**
+	 *
+	 * @return
+	 */
+	public static EventFactory getInstance() {
+
+		if(eventFactory == null){
+			eventFactory = new EventFactory();
+		}
+
+		return eventFactory;
 	}
 
 }

@@ -1,6 +1,6 @@
 package cs455.overlay.wireformats;
 
-public class OverlayNodeReportsTrafficSummary {
+public class OverlayNodeReportsTrafficSummary implements Event {
 
 	public OverlayNodeReportsTrafficSummary() {
 		// TODO Auto-generated constructor stub

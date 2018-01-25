@@ -1,13 +1,12 @@
-/**
- * 
- */
 package cs455.overlay.node;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 
 /**
- * 
+ *
+ * Registry Node
+ *
  * @author Adam Bellendir
  *
  */
@@ -15,6 +14,7 @@ public class Registry implements Node {
 	
 	private int registryPortNumber;
 	private static ServerSocket serverSocket;
+
 	
 	/**
 	 * 
@@ -51,11 +51,19 @@ public class Registry implements Node {
 	private void start(int numberOfMessages) {
 		
 	}
-	
+
+    /**
+     *
+     */
 	public void run() {
 		
 	}
-	
+
+    /**
+     *
+     * @param PortNumber
+     * @throws IOException
+     */
 	public static void openServerSocket(int PortNumber) throws IOException {
 		serverSocket = new ServerSocket(PortNumber);
 	}

@@ -7,7 +7,7 @@ package cs455.overlay.wireformats;
  * @author Chemical
  *
  */
-public class RegistryReportsRegistrationStatus {
+public class RegistryReportsRegistrationStatus implements Event{
 
 	/**
 	 * 

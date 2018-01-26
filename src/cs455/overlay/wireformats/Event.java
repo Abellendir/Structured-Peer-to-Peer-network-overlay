@@ -1,7 +1,5 @@
 package cs455.overlay.wireformats;
 
-import java.io.IOException;
-
 /**
  * 
  * @author Adam Bellendir
@@ -13,10 +11,17 @@ public interface Event {
 	 * @return 
 	 * 
 	 */
-	public static byte[] getByte();
+	byte[] getByte();
 	
 	/**
 	 * 
 	 */
-	public static getType();
+	int getType();
+	
+	/**
+	 * 
+	 * @return
+	 */
+	String toString();
+	
 }

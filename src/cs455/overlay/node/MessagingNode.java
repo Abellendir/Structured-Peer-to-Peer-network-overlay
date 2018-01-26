@@ -11,7 +11,6 @@ public class MessagingNode implements Node {
 	
 	private int sendTracker = 0;
 	private int receiveTracker = 0;
-	
 
 	/**
 	 * 

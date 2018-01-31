@@ -35,13 +35,6 @@ public class MessagingNode implements Node {
 	
 	/**
 	 * 
-	 */
-	public void run() {
-		
-	}
-	
-	/**
-	 * 
 	 * @param args
 	 */
 	public static void main(String [] args) {

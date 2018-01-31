@@ -1,6 +1,15 @@
 package cs455.overlay.wireformats;
 
 public class RegistrySendsNodeManifest implements Event {
+	
+	private byte type;
+	private byte routingTableSize;
+	private int[] nodeID;
+	private byte[] lengthIP;
+	private byte[][] nodeIPaddress;
+	private int[] portNumberOfID;
+	private byte numNodes;
+	private int[] allNodeIDs;
 
 	public RegistrySendsNodeManifest() {
 		// TODO Auto-generated constructor stub

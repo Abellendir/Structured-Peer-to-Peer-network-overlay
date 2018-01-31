@@ -1,6 +1,11 @@
 package cs455.overlay.wireformats;
 
 public class NodeReportsOverlaySetupStatus implements Event {
+	
+	private byte type;
+	private int status;
+	private byte length;
+	private byte[] infomationString;
 
 	public NodeReportsOverlaySetupStatus() {
 		// TODO Auto-generated constructor stub

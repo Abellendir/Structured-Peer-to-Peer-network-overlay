@@ -1,26 +1,44 @@
 package cs455.overlay.wireformats;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.InetAddress;
+
 public class OverlayNodeSendsRegistration implements Event {
 	
-	private int type;
-	private long timestamp;
-	private String identifier;
-	private int tracker;
-
-	public OverlayNodeSendsRegistration() {
-		// TODO Auto-generated constructor stub
+	private byte type = 2;
+	private byte length;
+	private byte[] IP_address;
+	private int portNumber;
+	
+	/**
+	 * 
+	 * @param length
+	 * @param IP_address
+	 * @param portNumber
+	 */
+	public OverlayNodeSendsRegistration(byte length, byte[] IP_address, int portNumber) {
+		this.IP_address = IP_address;
+		this.portNumber = portNumber;
 	}
 
 	@Override
-	public byte[] getByte() {
-		// TODO Auto-generated method stub
-		return null;
+	public byte[] getByte() throws IOException {
+		byte[] marshalledBytes = null;
+		ByteArrayOutputStream baOutputStream = new ByteArrayOutputStream();
+		DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(baOutputStream));
+		
+		dout.writeByte(type);
+		
+		return marshalledBytes;
 	}
 
 	@Override
 	public int getType() {
 		// TODO Auto-generated method stub
-		return 0;
+		return type;
 	}
 	
 	@Override

@@ -1,6 +1,14 @@
 package cs455.overlay.wireformats;
 
 public class OverlayNodeReportsTrafficSummary implements Event {
+	
+	private byte type;
+	private int AssignedNodeId;
+	private int totalSent;
+	private int totalRelayed;
+	private long sumSentData;
+	private int totalNumPacketsRec;
+	private long sumPacketsRec;
 
 	public OverlayNodeReportsTrafficSummary() {
 		// TODO Auto-generated constructor stub

@@ -1,6 +1,13 @@
 package cs455.overlay.wireformats;
 
 public class OverlayNodeSendsData implements Event {
+	
+	private byte type;
+	private int destinationId;
+	private int sourceId;
+	private int payload;
+	private int disseminationTrace;
+	private int[] disseminationNodeIDtrace;
 
 	public OverlayNodeSendsData() {
 		// TODO Auto-generated constructor stub

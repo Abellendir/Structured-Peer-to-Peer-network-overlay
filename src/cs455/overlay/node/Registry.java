@@ -1,7 +1,9 @@
 package cs455.overlay.node;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.net.Socket;
 
 /**
  *
@@ -13,14 +15,21 @@ import java.net.ServerSocket;
 public class Registry implements Node {
 	
 	private int registryPortNumber;
-	private static ServerSocket serverSocket;
-
+	private ServerSocket serverSocket;
+	private Socket[] nodeSockets = new Socket[128];
 	
 	/**
+	 * @throws IOException 
 	 * 
 	 */
-	public Registry(){
-		// TODO Auto-generated constructor stub
+	public Registry(int registryPortNumber) {
+		this.registryPortNumber = registryPortNumber; 
+		try {
+			serverSocket = openServerSocket(registryPortNumber);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -54,31 +63,18 @@ public class Registry implements Node {
 
     /**
      *
-     */
-	public void run() {
-		
-	}
-
-    /**
-     *
      * @param PortNumber
      * @throws IOException
      */
-	public static void openServerSocket(int PortNumber) throws IOException {
-		serverSocket = new ServerSocket(PortNumber);
+	public ServerSocket openServerSocket(int PortNumber) throws IOException {
+		return new ServerSocket(PortNumber);
 	}
+	
 	/**
 	 * 
 	 * @param args
 	 */
 	public static void main(String [] args) {
-		int registryPortNumber = Integer.parseInt(args[1]);
-		try {
-			openServerSocket(registryPortNumber);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		Registry registry = new Registry(Integer.parseInt(args[1]));
 	}
 }

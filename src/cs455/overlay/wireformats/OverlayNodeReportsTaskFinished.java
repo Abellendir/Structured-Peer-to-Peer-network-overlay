@@ -1,6 +1,12 @@
 package cs455.overlay.wireformats;
 
 public class OverlayNodeReportsTaskFinished implements Event {
+	
+	private byte type;
+	private byte length;
+	private byte[] IP_address;
+	private int portNumber;
+	private int nodeID;
 
 	public OverlayNodeReportsTaskFinished() {
 		// TODO Auto-generated constructor stub

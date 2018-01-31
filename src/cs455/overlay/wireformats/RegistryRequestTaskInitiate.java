@@ -1,6 +1,9 @@
 package cs455.overlay.wireformats;
 
 public class RegistryRequestTaskInitiate implements Event {
+	
+	private byte type;
+	private int numPacketsToSend;
 
 	public RegistryRequestTaskInitiate() {
 		// TODO Auto-generated constructor stub

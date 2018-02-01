@@ -1,11 +1,13 @@
 package cs455.overlay.wireformats;
 
+import java.util.Arrays;
+
 public class NodeReportsOverlaySetupStatus implements Event {
 	
 	private byte type;
 	private int status;
 	private byte length;
-	private byte[] infomationString;
+	private byte[] informationString;
 
 	public NodeReportsOverlaySetupStatus() {
 		// TODO Auto-generated constructor stub
@@ -25,6 +27,9 @@ public class NodeReportsOverlaySetupStatus implements Event {
 	
 	@Override
 	public String toString() {
-		return null;
+		return "\nbyte: Message Type (" + type + ")" +
+				"\nint: Success status; " + status +
+				"\nbyte: " + length +
+				"\nbyte[^^]: " + Arrays.toString(informationString);
 	}	
 }

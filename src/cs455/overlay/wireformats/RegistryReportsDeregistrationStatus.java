@@ -3,7 +3,6 @@ package cs455.overlay.wireformats;
 public  class RegistryReportsDeregistrationStatus implements Event{
 	
 	private byte type;
-	private byte type;
 	private byte lengthIPAddress;
 	private byte[] IP_address;
 	private int portNumber;

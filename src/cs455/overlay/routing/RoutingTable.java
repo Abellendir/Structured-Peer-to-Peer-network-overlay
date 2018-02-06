@@ -4,16 +4,26 @@
 package cs455.overlay.routing;
 
 /**
- * @author Chemical
+ * @author Adam Bellendir
  *
  */
 public class RoutingTable {
 
+	private RoutingEntry[] routingTable;
+	
 	/**
 	 * 
 	 */
-	public RoutingTable() {
-		// TODO Auto-generated constructor stub
+	public RoutingTable(int numberOfEntries) {
+		routingTable = new RoutingEntry[numberOfEntries];
+	}
+	
+	public void add(int index, RoutingEntry entry) {
+		routingTable[index] = entry;
+	}
+	
+	public RoutingEntry get(int index) {
+		return routingTable[index];
 	}
 
 }

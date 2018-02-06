@@ -50,5 +50,12 @@ public class TCPConnection implements Runnable{
         }
 
     }
+    
+    public void sendData(byte[] dataToSend) throws IOException{
+    	int dataLength = dataToSend.length;
+    	dout.writeInt(dataLength);
+    	dout.write(dataToSend,0,dataLength);
+    	dout.flush();
+    }
 
 }

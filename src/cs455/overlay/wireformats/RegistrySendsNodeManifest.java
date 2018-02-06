@@ -1,8 +1,13 @@
 package cs455.overlay.wireformats;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 public class RegistrySendsNodeManifest implements Event {
 	
-	private byte type;
+	private byte type = 6;
 	private byte routingTableSize;
 	private int[] nodeID;
 	private byte[] lengthIP;
@@ -16,9 +21,11 @@ public class RegistrySendsNodeManifest implements Event {
 	}
 
 	@Override
-	public byte[] getByte() {
-		// TODO Auto-generated method stub
-		return null;
+	public byte[] getByte() throws IOException{
+		byte[] marshalledBytes = null;
+		ByteArrayOutputStream baOutputStream = new ByteArrayOutputStream();
+		DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(baOutputStream));
+		return marshalledBytes;
 	}
 
 	@Override

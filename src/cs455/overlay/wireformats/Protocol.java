@@ -12,4 +12,9 @@ public class Protocol {
 		// TODO Auto-generated constructor stub
 	}
 
+	public Event getEvent(byte type, byte[] marshalledBytes) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

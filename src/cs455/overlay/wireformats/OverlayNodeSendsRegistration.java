@@ -13,6 +13,18 @@ public class OverlayNodeSendsRegistration implements Event {
 	private byte[] IP_address;
 	private int portNumber;
 	
+	public byte getLength() {
+		return length;
+	}
+	
+	public byte[] getIP_address() {
+		return IP_address;
+	}
+	
+	public int getPortNumber() {
+		return portNumber;
+	}
+	
 	/**
 	 * 
 	 * @param length
@@ -20,6 +32,7 @@ public class OverlayNodeSendsRegistration implements Event {
 	 * @param portNumber
 	 */
 	public OverlayNodeSendsRegistration(byte length, byte[] IP_address, int portNumber) {
+		this.length = length;
 		this.IP_address = IP_address;
 		this.portNumber = portNumber;
 	}
@@ -30,7 +43,16 @@ public class OverlayNodeSendsRegistration implements Event {
 		ByteArrayOutputStream baOutputStream = new ByteArrayOutputStream();
 		DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(baOutputStream));
 		
-		dout.writeByte(type);
+		dout.write(type);
+		dout.write(length);
+		dout.write(IP_address);
+		dout.writeByte(portNumber);
+		dout.flush();
+		
+		marshalledBytes = baOutputStream.toByteArray();
+		
+		baOutputStream.close();
+		dout.close();
 		
 		return marshalledBytes;
 	}

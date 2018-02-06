@@ -1,5 +1,10 @@
 package cs455.overlay.wireformats;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 public class OverlayNodeReportsTaskFinished implements Event {
 	
 	private byte type;
@@ -13,9 +18,11 @@ public class OverlayNodeReportsTaskFinished implements Event {
 	}
 
 	@Override
-	public byte[] getByte() {
-		// TODO Auto-generated method stub
-		return null;
+	public byte[] getByte() throws IOException{
+		byte[] marshalledBytes = null;
+		ByteArrayOutputStream baOutputStream = new ByteArrayOutputStream();
+		DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(baOutputStream));
+		return marshalledBytes;
 	}
 
 	@Override

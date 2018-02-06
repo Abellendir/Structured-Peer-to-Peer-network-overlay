@@ -17,6 +17,7 @@ public interface Event {
 	 */
 	byte[] getByte() throws IOException;
 	
+	
 	/**
 	 * 
 	 */

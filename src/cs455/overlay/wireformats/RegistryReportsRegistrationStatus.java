@@ -14,7 +14,7 @@ import java.io.IOException;
  */
 public class RegistryReportsRegistrationStatus implements Event{
 	
-	private int type = 3;
+	private byte type = 3;
 	private int successStatus;
 	private int length;
 	
@@ -33,7 +33,7 @@ public class RegistryReportsRegistrationStatus implements Event{
 		
 		dout.writeInt(type);
 		
-		return null;
+		return marshalledBytes;
 	}
 
 	@Override

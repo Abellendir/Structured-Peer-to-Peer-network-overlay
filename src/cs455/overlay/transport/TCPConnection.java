@@ -3,10 +3,16 @@
  */
 package cs455.overlay.transport;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.SocketException;
+
 /**
  * @Author Adam Bellendir
  */
-public class TCPConnection {
+public class TCPConnection implements Runnable{
 
 	private Socket socket;
 	private DataOutputStream dout;
@@ -14,8 +20,10 @@ public class TCPConnection {
 
     /**
      *
+     * @throws IOException 
+     *
      */
-	public TCPConnection(Socket socket) {
+	public TCPConnection(Socket socket) throws IOException {
         this.socket = socket;
         din = new DataInputStream(socket.getInputStream());
         dout = new DataOutputStream(socket.getOutputStream());

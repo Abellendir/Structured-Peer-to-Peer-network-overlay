@@ -4,6 +4,8 @@
 package cs455.overlay.wireformats;
 
 /**
+ * 
+ * Bridge between nodes
  * @author Chemical
  *
  */

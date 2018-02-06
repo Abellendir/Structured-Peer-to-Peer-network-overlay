@@ -9,14 +9,23 @@ import java.io.IOException;
  */
 public interface Event {
 	
+
 	/**
 	 * @return 
+	 * @throws IOException 
 	 * 
 	 */
-	public static byte[] getByte();
+	byte[] getByte() throws IOException;
 	
 	/**
 	 * 
 	 */
-	public static getType();
+	int getType();
+	
+	/**
+	 * 
+	 * @return
+	 */
+	String toString();
+	
 }

@@ -15,6 +15,7 @@ public class TCPServerThread implements Runnable{
 	 * 
 	 */
 	private ServerSocket serverSocket;
+	private TCPConnectionsCache cache = TCPConnectionsCache.getInstance();
 	
 	/**
 	 * 
@@ -28,12 +29,18 @@ public class TCPServerThread implements Runnable{
 	 * 
 	 */
 	public void run() {
-		
-		try {
-			Socket socket = serverSocket.accept();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		while(serverSocket != null) {
+			try {
+				Socket socket = serverSocket.accept();
+				TCPConnection tcpConnection = new TCPConnection(socket);
+				Thread connection = new Thread(tcpConnection);
+				connection.start();
+				
+				System.out.print("node connects to node\n");
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 	}

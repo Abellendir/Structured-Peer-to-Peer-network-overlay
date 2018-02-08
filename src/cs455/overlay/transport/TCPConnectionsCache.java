@@ -1,21 +1,40 @@
 package cs455.overlay.transport;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TCPConnectionsCache {
 	
-	private ArrayList<TCPConnection> tcpConnectionCache;
+	private Thread serverThread = null;
+	
+	private List<Thread> tcpConnectionsCache;
+	
+	private static TCPConnectionsCache cache;
 
-	public TCPConnectionsCache() {
-		// TODO Auto-generated constructor stub
+	private TCPConnectionsCache() {
+		tcpConnectionsCache = new ArrayList<Thread>();
 	}
 	
-	public TCPConnection getConnection(int index) {
-		return tcpConnectionCache.get(index);
+	public static TCPConnectionsCache getInstance() {
+		if(cache != null) {
+			cache = new TCPConnectionsCache();
+		}
+		return cache;
 	}
 	
-	public void addConnection(TCPConnection connection) {
-		tcpConnectionCache.add(connection);
+	public Thread getConnection(int index) {
+		return tcpConnectionsCache.get(index);
 	}
-
+	
+	public void addConnection(Thread connection) {
+		tcpConnectionsCache.add(connection);
+	}
+	
+	public void addServerConnection(Thread serverThread) {
+		this.serverThread = serverThread;
+	}
+	
+	public Thread getServerThread() {
+		return serverThread;
+	}
 }

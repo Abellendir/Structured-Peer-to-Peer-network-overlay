@@ -16,8 +16,6 @@ public interface Node {
 	 * 
 	 * @param event
 	 */
-	public static void onEvent(Event event) {
-		int type = event.getType();
-	}
+	public void onEvent(Event event);
 	
 }

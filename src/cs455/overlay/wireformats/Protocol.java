@@ -10,17 +10,17 @@ import java.io.IOException;
  */
 public interface Protocol {
 	
-	public static final byte OVERLAY_NODE_SENDS_REGISTRATION = 2;
-	public static final byte REGISTRY_REPORTS_REGISTRATION_STATUS = 3;
-	public static final byte OVERLAY_NODE_SENDS_DEREGISTRATION = 4;
-	public static final byte REGISTRY_REPORTS_DEREGISTRATION_STATUS = 5;
-	public static final byte REGISTRY_SENDS_NODE_MANIFEST = 6;
-	public static final byte NODE_REPORTS_OVERLAY_SETUP_STATUS = 7;
-	public static final byte REGISTRY_REQUESTS_TASK_INITIATE = 8;
-	public static final byte OVERLAY_NODE_SENDS_DATA = 9;
-	public static final byte OVERLAY_NODE_REPORTS_TASK_FINISHED = 10;
-	public static final byte REGISTRY_REQUEST_TRAFFIC_SUMMARY = 11;
-	public static final byte OVERLAY_NODE_REPORTS_TRAFFIC_SUMMARY = 12;
+	public static final int OVERLAY_NODE_SENDS_REGISTRATION = 2;
+	public static final int REGISTRY_REPORTS_REGISTRATION_STATUS = 3;
+	public static final int OVERLAY_NODE_SENDS_DEREGISTRATION = 4;
+	public static final int REGISTRY_REPORTS_DEREGISTRATION_STATUS = 5;
+	public static final int REGISTRY_SENDS_NODE_MANIFEST = 6;
+	public static final int NODE_REPORTS_OVERLAY_SETUP_STATUS = 7;
+	public static final int REGISTRY_REQUESTS_TASK_INITIATE = 8;
+	public static final int OVERLAY_NODE_SENDS_DATA = 9;
+	public static final int OVERLAY_NODE_REPORTS_TASK_FINISHED = 10;
+	public static final int REGISTRY_REQUEST_TRAFFIC_SUMMARY = 11;
+	public static final int OVERLAY_NODE_REPORTS_TRAFFIC_SUMMARY = 12;
 	
 	/**
 	 * Determines the type of event being received and to send to onEvent
@@ -29,11 +29,11 @@ public interface Protocol {
 	 * @return
 	 * @throws IOException 
 	 */
-	public static Event getEvent(byte type, byte[] marshalledBytes) throws IOException {
+	public static Event getEvent(int type, byte[] marshalledBytes) throws IOException {
 		switch(type) {
-			case OVERLAY_NODE_SENDS_REGISTRATION:        
-				return new OverlayNodeReportsTaskFinished(marshalledBytes);
-			case REGISTRY_REPORTS_REGISTRATION_STATUS:   
+			case OVERLAY_NODE_SENDS_REGISTRATION:
+				return new OverlayNodeSendsRegistration(marshalledBytes);
+			case REGISTRY_REPORTS_REGISTRATION_STATUS:
 				return new RegistryReportsRegistrationStatus(marshalledBytes);
 			case OVERLAY_NODE_SENDS_DEREGISTRATION:      
 				return new OverlayNodeSendsDeregistration(marshalledBytes);

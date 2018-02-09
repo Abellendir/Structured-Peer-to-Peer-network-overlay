@@ -18,9 +18,8 @@ import java.io.IOException;
  */
 public class NodeReportsOverlaySetupStatus implements Event, Protocol {
 	
-	private byte type = NODE_REPORTS_OVERLAY_SETUP_STATUS;
+	private int type = NODE_REPORTS_OVERLAY_SETUP_STATUS;
 	private int status;
-	private byte length;
 	private String informationString;
 
 	/**
@@ -29,9 +28,8 @@ public class NodeReportsOverlaySetupStatus implements Event, Protocol {
 	 * @param length
 	 * @param informationString
 	 */
-	public NodeReportsOverlaySetupStatus(int status, byte length, String informationString) {
+	public NodeReportsOverlaySetupStatus(int status, String informationString) {
 		this.status = status;
-		this.length = length;
 		this.informationString = informationString;
 	}
 	
@@ -46,7 +44,7 @@ public class NodeReportsOverlaySetupStatus implements Event, Protocol {
 		
 		type = din.readByte();
 		status = din.readInt();
-		length = din.readByte();
+		int length = din.readByte();
 		byte[] message = new byte[length];
 		din.readFully(message);
 		informationString = new String(message);
@@ -63,8 +61,9 @@ public class NodeReportsOverlaySetupStatus implements Event, Protocol {
 		
 		dout.writeByte(type);
 		dout.writeInt(status);
-		dout.writeByte(length);
 		byte[] informationMessage = informationString.getBytes();
+		int length = informationMessage.length;
+		dout.writeByte(length);
 		dout.write(informationMessage);
 		
 		dout.flush();
@@ -84,7 +83,7 @@ public class NodeReportsOverlaySetupStatus implements Event, Protocol {
 	public String toString() {
 		return "\nbyte: Message Type (" + type + ")" +
 				"\nint: Success status; " + status +
-				"\nbyte: " + length +
+				"\nbyte: " +  
 				"\nbyte[^^]: " + informationString;
 	}	
 }

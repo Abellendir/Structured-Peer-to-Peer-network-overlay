@@ -19,7 +19,7 @@ import java.util.Arrays;
  */
 public class OverlayNodeSendsData implements Event, Protocol {
 	
-	private byte type = OVERLAY_NODE_SENDS_DATA;
+	private int type = OVERLAY_NODE_SENDS_DATA;
 	private int destinationId;
 	private int sourceId;
 	private int payload;
@@ -35,13 +35,12 @@ public class OverlayNodeSendsData implements Event, Protocol {
 	 * @param disseminationTraceLength
 	 * @param disseminationNodeIDtrace
 	 */
-	public OverlayNodeSendsData(int type, int destinationId, int sourceId, 
-			int payload,int disseminationTraceLength,int[] disseminationNodeIDtrace ) {
-		this.type = (byte) type;
+	public OverlayNodeSendsData(int destinationId, int sourceId, 
+			int payload,int[] disseminationNodeIDtrace ) {
 		this.destinationId = destinationId;
 		this.sourceId = sourceId;
 		this.payload = payload;
-		this.disseminationTraceLength = disseminationTraceLength;
+		this.disseminationTraceLength = disseminationNodeIDtrace.length;
 		this.disseminationNodeIDtrace = disseminationNodeIDtrace;
 	}
 

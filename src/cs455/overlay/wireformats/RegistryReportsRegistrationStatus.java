@@ -10,6 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * @author Adam Bellendir
@@ -17,7 +18,7 @@ import java.io.IOException;
  */
 public class RegistryReportsRegistrationStatus implements Event , Protocol{
 	
-	private byte type = REGISTRY_REPORTS_REGISTRATION_STATUS;
+	private int type = REGISTRY_REPORTS_REGISTRATION_STATUS;
 	private int ID = -1;
 	private int length;
 	private String message;
@@ -25,10 +26,10 @@ public class RegistryReportsRegistrationStatus implements Event , Protocol{
 	/**
 	 * 
 	 */
-	public RegistryReportsRegistrationStatus(byte type, int ID, String message) {
-		this.type = type;
+	public RegistryReportsRegistrationStatus(int ID, String message) {
 		this.ID = ID;
 		this.message = message;
+		this.length = message.length();
 	}
 
 	/**
@@ -40,11 +41,15 @@ public class RegistryReportsRegistrationStatus implements Event , Protocol{
 		DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
 		
 		type = din.readByte();
+		System.out.println("byte: " + type);
 		ID = din.readInt();
-		length = din.readInt();
+		System.out.println("id: " + ID);
+		length = din.readByte();
+		System.out.println("length: " + length);
 		byte[] infoMessage = new byte[length];
-		din.readFully(infoMessage);
+		din.readFully(infoMessage,0,length);
 		message = new String(infoMessage);
+		System.out.println("message: " + message);
 		
 		baInputStream.close();
 		din.close();
@@ -59,9 +64,21 @@ public class RegistryReportsRegistrationStatus implements Event , Protocol{
 		ByteArrayOutputStream baOutputStream = new ByteArrayOutputStream();
 		DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(baOutputStream));
 		
-		dout.writeInt(type);
-		marshalledBytes = baOutputStream.toByteArray();
+		dout.writeByte(type);
+		System.out.println("byte: type; " + type);
+		dout.writeInt(ID);
+		System.out.println("int: Success status; " + ID);
+		byte[] messagebytes = message.getBytes();
+		int length = messagebytes.length;
+		System.out.println("byte: lenght; " + length);
+		System.out.println("byte[^^]: " + Arrays.toString(messagebytes));
+		dout.writeByte(length);
+		dout.write(messagebytes);
 		
+		
+		dout.flush();
+		marshalledBytes = baOutputStream.toByteArray();
+		System.out.println(Arrays.toString(marshalledBytes));
 		baOutputStream.close();
 		dout.close();
 		return marshalledBytes;
@@ -73,7 +90,7 @@ public class RegistryReportsRegistrationStatus implements Event , Protocol{
 	 */
 	public int getType() {
 		// TODO Auto-generated method stub
-		return 0;
+		return type;
 	}
 	
 	@Override

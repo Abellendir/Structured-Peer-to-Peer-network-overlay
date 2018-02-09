@@ -8,7 +8,6 @@ import java.io.IOException;
  *
  */
 public interface Event {
-	
 
 	/**
 	 * @return 

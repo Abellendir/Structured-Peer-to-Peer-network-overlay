@@ -18,27 +18,39 @@ import java.io.IOException;
  */
 public  class RegistryReportsDeregistrationStatus implements Event, Protocol{
 	
-	private byte type = REGISTRY_REPORTS_DEREGISTRATION_STATUS;
-	private byte lengthIPAddress;
+	private int type = REGISTRY_REPORTS_DEREGISTRATION_STATUS;
+	private byte length;
 	private byte[] IP_address;
 	private int portNumber;
-	private int assignedNodeID;
+	private int nodeID;
 
 	/**
 	 * 
 	 */
-	public RegistryReportsDeregistrationStatus() {
-		// TODO Auto-generated constructor stub
+	public RegistryReportsDeregistrationStatus(byte[] IP_address, int portNumber, int nodeID) {
+		this.length = (byte) IP_address.length;
+		this.IP_address = IP_address;
+		this.portNumber = portNumber;
+		this.nodeID = nodeID;
 	}
 
 	/**
 	 * constructor to unmarshall the bytes
 	 * @param data
 	 */
-	public RegistryReportsDeregistrationStatus(byte[] data) {
+	public RegistryReportsDeregistrationStatus(byte[] data) throws IOException{
 		ByteArrayInputStream baInputStream = new ByteArrayInputStream(data);
 		DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
 		
+		type = din.readByte();
+		length = din.readByte();
+		IP_address = new byte[length];
+		din.readFully(IP_address);
+		portNumber = din.readInt();
+		nodeID = din.readInt();
+		
+		baInputStream.close();
+		din.close();
 	}
 	
 	@Override
@@ -49,10 +61,19 @@ public  class RegistryReportsDeregistrationStatus implements Event, Protocol{
 		byte[] marshalledBytes = null;
 		ByteArrayOutputStream baOutputStream = new ByteArrayOutputStream();
 		DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(baOutputStream));
+		
+		dout.writeByte(type);
+		dout.writeByte(length);
+		dout.write(IP_address);
+		dout.writeInt(portNumber);
+		dout.writeInt(nodeID);
+		dout.flush();
+		
 		marshalledBytes = baOutputStream.toByteArray();
 		
 		baOutputStream.close();
 		dout.close();
+		
 		return marshalledBytes;
 	}
 
@@ -62,7 +83,7 @@ public  class RegistryReportsDeregistrationStatus implements Event, Protocol{
 	 */
 	public int getType() {
 		// TODO Auto-generated method stub
-		return 0;
+		return type;
 	}
 	
 	@Override

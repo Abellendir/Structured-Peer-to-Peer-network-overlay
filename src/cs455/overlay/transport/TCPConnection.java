@@ -8,6 +8,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Arrays;
 
 import cs455.overlay.wireformats.EventFactory;
 
@@ -36,12 +37,13 @@ public class TCPConnection implements Runnable{
      *
      */
     public void run() {
-
         int dataLength;
         while(socket != null){
+        	System.out.println("Recieved");
             try{
                 dataLength = din.readInt();
                 byte[] data = new byte[dataLength];
+                din.readFully(data,0,dataLength);
                 eventFactory.handleBytes(data);
 
             }catch(SocketException se){

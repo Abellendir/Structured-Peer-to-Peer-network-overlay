@@ -18,37 +18,50 @@ import java.io.IOException;
  */
 public class RegistrySendsNodeManifest implements Event, Protocol {
 	
-	private byte type = REGISTRY_SENDS_NODE_MANIFEST;
-	private byte size;
+	private int type = REGISTRY_SENDS_NODE_MANIFEST;
 	private int[] nodeID;
-	private byte[] length;
 	private byte[][] IP_addresses;
 	private int[] portNumbers;
-	private byte numberNodesInSystem;
 	private int[] allNodes;
 
 	/**
 	 * constructor to construct the outgoing message
 	 */
-	public RegistrySendsNodeManifest(byte size, int[] nodeID, byte[] length, byte[][] IP_addresses, 
-			int[] portNumber, byte numberNodesInSystem, int[] allNodes ) {
-		this.size = size;
+	public RegistrySendsNodeManifest(int[] nodeID, byte[][] IP_addresses, int[] portNumber, int[] allNodes ) {
 		this.nodeID = nodeID;
-		this.length = length;
 		this.IP_addresses = IP_addresses;
 		this.portNumbers = portNumber;
-		this.numberNodesInSystem = numberNodesInSystem;
 		this.allNodes = allNodes;
 	}
 	
 	/**
 	 * constructor to unmarshall the bytes
 	 * @param data
+	 * @throws IOException 
 	 */
-	public RegistrySendsNodeManifest(byte[] data) {
+	public RegistrySendsNodeManifest(byte[] data) throws IOException {
 		ByteArrayInputStream baInputStream = new ByteArrayInputStream(data);
 		DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
 		
+		int type = din.readByte();
+		int size = din.readByte();
+		nodeID = new int[size];
+		IP_addresses = new byte[size][];
+		portNumbers = new int[size];
+		for(int i = size; i < size; i++) {
+			nodeID[i] = din.readInt();
+			int length = din.readByte();
+			din.read(IP_addresses[i],0,length);
+			portNumbers[i] = din.readInt();
+		}
+		int numberNodesInSystem = din.readByte();
+		allNodes = new int[numberNodesInSystem];
+		for(int i = 0; i < numberNodesInSystem; i++) {
+			allNodes[i] = din.readInt();
+		}
+		
+		baInputStream.close();
+		din.close();
 	}
 
 	@Override
@@ -61,18 +74,19 @@ public class RegistrySendsNodeManifest implements Event, Protocol {
 		DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(baOutputStream));
 		
 		dout.writeByte(type);
-		dout.writeByte(size);
-		for(byte i = 0; i < size; i++) {
+		dout.writeByte(nodeID.length);
+		for(byte i = 0; i < nodeID.length; i++) {
 			dout.writeInt(nodeID[i]);
-			dout.writeByte(length[i]);
-			dout.write(IP_addresses[i]);
+			int length = IP_addresses[i].length;
+			dout.write(IP_addresses[i],0,length);
 			dout.writeInt(portNumbers[i]);
 		}
-		
-		dout.writeByte(numberNodesInSystem);
+		int numberNodesInSystem = allNodes.length; 
 		for(byte i = 0; i < numberNodesInSystem; i++) {
 			dout.writeInt(allNodes[i]);
 		}
+		
+		dout.flush();
 		marshalledBytes = baOutputStream.toByteArray();
 		
 		baOutputStream.close();

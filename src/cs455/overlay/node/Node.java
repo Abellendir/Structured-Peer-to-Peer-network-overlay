@@ -3,8 +3,6 @@
  */
 package cs455.overlay.node;
 
-import java.net.InetAddress;
-
 import cs455.overlay.wireformats.Event;
 
 /**

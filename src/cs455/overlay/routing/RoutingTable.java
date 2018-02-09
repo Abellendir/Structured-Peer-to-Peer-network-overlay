@@ -25,5 +25,8 @@ public class RoutingTable {
 	public RoutingEntry get(int index) {
 		return routingTable[index];
 	}
-
+	
+	public int getSize() {
+		return routingTable.length;
+	}
 }

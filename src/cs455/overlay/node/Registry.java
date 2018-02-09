@@ -2,12 +2,13 @@ package cs455.overlay.node;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
 
 import cs455.overlay.transport.TCPConnectionsCache;
 import cs455.overlay.transport.TCPServerThread;
 import cs455.overlay.util.InteractiveCommandParser;
 import cs455.overlay.wireformats.Event;
+import cs455.overlay.wireformats.EventFactory;
+import cs455.overlay.wireformats.RegistryReportsRegistrationStatus;
 
 /**
  *
@@ -18,13 +19,12 @@ import cs455.overlay.wireformats.Event;
  */
 public class Registry implements Node {
 	
-	private String[][] nodes;
 	private Thread serverThread = null;
 	private Thread interactiveCommandParser = null;
+	private EventFactory eventFactory = EventFactory.getInstance();
+	private TCPConnectionsCache tcpConnectionsCache = TCPConnectionsCache.getInstance();
 	private int registryPortNumber;
 	private ServerSocket serverSocket;
-	private Socket[] nodeSockets = new Socket[128];
-	private TCPConnectionsCache tcpConnectionsCache = TCPConnectionsCache.getInstance();
 	
 	/**
 	 * @throws IOException 
@@ -32,17 +32,15 @@ public class Registry implements Node {
 	 */
 	public Registry(int registryPortNumber) {
 		this.registryPortNumber = registryPortNumber;
-		InteractiveCommandParser commandParser = new InteractiveCommandParser(this);
-		Thread interactiveCommandParser = new Thread(commandParser);
-		interactiveCommandParser.start();
-		this.interactiveCommandParser = interactiveCommandParser;
 		try {
-			serverThread = startServerThread(registryPortNumber);
+			startServerThread(registryPortNumber);
+			eventFactory.giveNode(this);
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			System.out.print("DEAD");
 			e.printStackTrace();
 		}
+		eventFactory.giveNode(this);
 	}
 	
 	/**
@@ -51,8 +49,36 @@ public class Registry implements Node {
 	 */
 	@Override
 	public void onEvent(Event event) {
+		switch(event.getType()) {
+		case 2: break;
+		case 3: break;
+		case 4: break;
+		case 5: break;
+		case 6: break;
+		case 7: break;
+		case 8: break;
+		case 9: break;
+		case 10: break;
+		case 11: break;
+		case 12: break;
+		default: break;
+		
+		}
+		if(event.getType() == 2) {
+			RegistryReportsRegistrationStatus send = new RegistryReportsRegistrationStatus(1,"Success");
+			System.out.println(send);
+			try {
+				byte[] bytes = send.getByte();
+				tcpConnectionsCache.getSender(0).sendData(bytes);
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 	}
+	
 	/**
 	 * 
 	 */
@@ -88,12 +114,12 @@ public class Registry implements Node {
      * @return 
      * @throws IOException
      */
-	public Thread startServerThread(int portNumber) throws IOException {
+	public void startServerThread(int portNumber) throws IOException {
 		ServerSocket serverSocket = new ServerSocket(portNumber);
 		TCPServerThread tcpServerThread = new TCPServerThread(serverSocket);
-		Thread serverThread = new Thread(tcpServerThread);
+		serverThread = new Thread(tcpServerThread);
 		serverThread.start();
-		return serverThread;
+		tcpConnectionsCache.addServerConnection(serverThread);
 	}
 	
 	/**
@@ -107,11 +133,19 @@ public class Registry implements Node {
 			e.printStackTrace();
 		}
 	}
+	
 	/**
 	 * 
 	 * @param args
 	 */
 	public static void main(String [] args) {
-		Registry registry = new Registry(Integer.parseInt(args[1]));
+		System.out.println("Starting Registry");
+		Registry registry = new Registry(Integer.parseInt(args[0]));
+		InteractiveCommandParser commandParser = new InteractiveCommandParser(registry);
+		Thread interactiveCommandParser = new Thread(commandParser);
+		interactiveCommandParser.start();
+		while(interactiveCommandParser.isAlive()) {
+			
+		}
 	}
 }

@@ -3,14 +3,14 @@ package cs455.overlay.routing;
 public class RoutingEntry {
 	
 	private int ID;
-	private byte length;
+	private int index;
 	private byte[] IP_address;
 	private int portNumber;
 	
-	public RoutingEntry(int ID, byte length, byte[] IP_address, int portNumber) {
+	public RoutingEntry(int ID, int index, byte[] IP_address, int portNumber) {
 		
 		this.ID = ID;
-		this.length = length;
+		this.index = index;
 		this.IP_address = IP_address;
 		this.portNumber = portNumber;
 	}
@@ -19,8 +19,8 @@ public class RoutingEntry {
 		return ID;
 	}
 
-	public byte getLength() {
-		return length;
+	public int getIndex() {
+		return index;
 	}
 
 	public byte[] getIP_address() {

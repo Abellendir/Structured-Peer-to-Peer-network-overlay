@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
 
+import cs455.overlay.wireformats.EventFactory;
+
 /**
  * @Author Adam Bellendir
  */
@@ -17,6 +19,7 @@ public class TCPConnection implements Runnable{
 	private Socket socket;
 	private DataOutputStream dout;
 	private DataInputStream din;
+	private EventFactory eventFactory = EventFactory.getInstance();
 
     /**
      *
@@ -39,6 +42,7 @@ public class TCPConnection implements Runnable{
             try{
                 dataLength = din.readInt();
                 byte[] data = new byte[dataLength];
+                eventFactory.handleBytes(data);
 
             }catch(SocketException se){
                 System.out.println(se.getMessage());
@@ -50,8 +54,8 @@ public class TCPConnection implements Runnable{
         }
 
     }
-    
-    public void sendData(byte[] dataToSend) throws IOException{
+
+	public void sendData(byte[] dataToSend) throws IOException{
     	int dataLength = dataToSend.length;
     	dout.writeInt(dataLength);
     	dout.write(dataToSend,0,dataLength);

@@ -16,4 +16,9 @@ public interface Node {
 	 */
 	public void onEvent(Event event);
 	
+	/**
+	 * 
+	 * @param command
+	 */
+	public void interactiveCommandEvent(String command);
 }

@@ -15,6 +15,7 @@ import cs455.overlay.transport.TCPConnectionsCache;
 import cs455.overlay.transport.TCPServerThread;
 import cs455.overlay.util.InteractiveCommandParser;
 import cs455.overlay.wireformats.Event;
+import cs455.overlay.wireformats.EventFactory;
 import cs455.overlay.wireformats.OverlayNodeSendsRegistration;
 
 /**
@@ -26,6 +27,7 @@ public class MessagingNode implements Node {
 	private int nodeID;
 	private RoutingTable routingTable;
 	private TCPConnectionsCache cache = TCPConnectionsCache.getInstance();
+	private EventFactory eventFactory = EventFactory.getInstance();
 	private byte[] IP_address;
 	private int portNumber;
 	private ServerSocket serverSocket;
@@ -42,6 +44,7 @@ public class MessagingNode implements Node {
 		try {
 			IP_address = InetAddress.getLocalHost().getAddress();
 			openServerSocket();
+			eventFactory.giveNode(this);
 			registerWithRegistry(hostName, portNumber);
 		} catch (UnknownHostException e) {
 			System.out.println("\nFailed to connect with registry node");
@@ -52,9 +55,6 @@ public class MessagingNode implements Node {
 		}
 	}
 	
-	/**
-	 * @param event
-	 */
 	@Override
 	public void onEvent(Event event) {
 		if(event.getType() == 3) {
@@ -93,15 +93,17 @@ public class MessagingNode implements Node {
 		cache.addServerConnection(server);
 	}
 	
+	//FIGURE OUT IP ADDRESS
 	private void registerWithRegistry(String hostName, int portNumber) throws IOException{
 		Socket socket = new Socket(hostName,portNumber);
+		InetAddress addr = socket.getLocalAddress();
+		byte[] address = addr.getAddress();
 		TCPConnection registryConnection = new TCPConnection(socket);
 		Thread registry = new Thread(registryConnection);
 		registry.start();
-		cache.addConnection(registry);
 		cache.addRegistry(registryConnection);
 		OverlayNodeSendsRegistration registration = 
-				new OverlayNodeSendsRegistration(IP_address.length, IP_address, serverSocket.getLocalPort());
+				new OverlayNodeSendsRegistration(address.length, address, socket.getLocalPort());
 		System.out.println(registration);
 		registryConnection.sendData(registration.getByte());
 	}
@@ -117,10 +119,14 @@ public class MessagingNode implements Node {
 			TCPConnection tcpConnection = new TCPConnection(socket);
 			Thread connection = new Thread(tcpConnection);
 			connection.start();
-			cache.addSender(i, tcpConnection);
 		}
 	}
 	
+	@Override
+	public void interactiveCommandEvent(String command) {
+		// TODO Auto-generated method stub
+		
+	}
 	/**
 	 * 
 	 * @param args

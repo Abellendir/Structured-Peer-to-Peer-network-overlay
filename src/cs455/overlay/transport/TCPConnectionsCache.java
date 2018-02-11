@@ -4,6 +4,7 @@
 package cs455.overlay.transport;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -14,16 +15,14 @@ import java.util.List;
 public class TCPConnectionsCache {
 	
 	private Thread serverThread = null;
-	private List<Thread> tcpConnectionsCache;
+	private static List<TCPConnection> tcpConnectionsCache = new ArrayList<TCPConnection>();
 	private TCPConnection registry;
-	private TCPConnection[] tcpSenders;
 	private static final TCPConnectionsCache cache = new TCPConnectionsCache();
 	
 	/**
 	 * 
 	 */
 	private TCPConnectionsCache() {
-		tcpConnectionsCache = new ArrayList<Thread>();
 	}
 	
 	/**
@@ -39,15 +38,21 @@ public class TCPConnectionsCache {
 	 * @param index
 	 * @return
 	 */
-	public Thread getConnection(int index) {
-		return tcpConnectionsCache.get(index);
+	public synchronized TCPConnection getConnection(byte[] addr, int portNumber) {
+		for(TCPConnection conn: tcpConnectionsCache) {
+			System.out.println(conn.toString());
+			if(Arrays.equals(addr, conn.getAddress()) && portNumber == conn.getPortNumber()) {
+				return conn;
+			}
+		}
+		return null;
 	}
 	
 	/**
 	 * 
 	 * @param connection
 	 */
-	public void addConnection(Thread connection) {
+	public synchronized void addConnection(TCPConnection connection) {
 		tcpConnectionsCache.add(connection);
 	}
 	
@@ -77,32 +82,6 @@ public class TCPConnectionsCache {
 	
 	/**
 	 * 
-	 * @param size
-	 */
-	public void setSizeOfSenders(int size) {
-		tcpSenders = new TCPConnection[size];
-	}
-	
-	/**
-	 * 
-	 * @param index
-	 * @param sender
-	 */
-	public void addSender(int index, TCPConnection sender) {
-		tcpSenders[index] = sender;
-	}
-	
-	/**
-	 * 
-	 * @param index
-	 * @return
-	 */
-	public TCPConnection getSender(int index) {
-		return tcpSenders[index];
-	}
-	
-	/**
-	 * 
 	 * @param registry
 	 */
 	public void addRegistry(TCPConnection registry) {
@@ -115,5 +94,9 @@ public class TCPConnectionsCache {
 	 */
 	public TCPConnection getRegistry() {
 		return registry;
+	}
+
+	public void remove(TCPConnection tcpConnection) {
+		tcpConnectionsCache.remove(tcpConnection);
 	}
 }

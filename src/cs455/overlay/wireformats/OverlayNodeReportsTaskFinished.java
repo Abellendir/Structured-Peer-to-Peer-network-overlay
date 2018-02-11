@@ -32,7 +32,7 @@ public class OverlayNodeReportsTaskFinished implements Event, Protocol {
 	 * @param nodeID
 	 */
 	public OverlayNodeReportsTaskFinished(int length, byte[] IP_address, int portNumber, int nodeID) {
-		this.length = length;
+		this.length = IP_address.length;
 		this.IP_address = IP_address;
 		this.portNumber = portNumber;
 		this.nodeID = nodeID;
@@ -49,7 +49,7 @@ public class OverlayNodeReportsTaskFinished implements Event, Protocol {
 		type = din.readByte();
 		length = din.readByte();
 		IP_address = new byte[length];
-		din.readFully(IP_address);
+		din.readFully(IP_address,0,length);
 		portNumber = din.readInt();
 		nodeID = din.readInt();
 		
@@ -69,7 +69,7 @@ public class OverlayNodeReportsTaskFinished implements Event, Protocol {
 		
 		dout.writeByte(type);
 		dout.writeByte(length);
-		dout.write(IP_address);
+		dout.write(IP_address,0,length);
 		dout.writeInt(portNumber);
 		dout.writeInt(nodeID);
 		

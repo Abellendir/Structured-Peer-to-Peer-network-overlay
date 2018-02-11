@@ -31,7 +31,7 @@ public interface Protocol {
 	 */
 	public static Event getEvent(int type, byte[] marshalledBytes) throws IOException {
 		switch(type) {
-			case OVERLAY_NODE_SENDS_REGISTRATION:
+			case OVERLAY_NODE_SENDS_REGISTRATION: System.out.println("Protocal register");
 				return new OverlayNodeSendsRegistration(marshalledBytes);
 			case REGISTRY_REPORTS_REGISTRATION_STATUS:
 				return new RegistryReportsRegistrationStatus(marshalledBytes);

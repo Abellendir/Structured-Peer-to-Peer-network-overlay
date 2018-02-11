@@ -66,19 +66,16 @@ public class OverlayNodeSendsRegistration implements Event, Protocol {
 	 * @param data
 	 */
 	public OverlayNodeSendsRegistration(byte[] data) throws IOException {
-		System.out.println("Entering OverlayNodesendsRegistration");
+		
 		ByteArrayInputStream baInputStream = new ByteArrayInputStream(data);
 		DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
-		System.out.println("Reading Bytes");
+		
 		type = din.readByte();
-		System.out.println(type);
 		length = din.readByte();
-		System.out.println(length);
 		IP_address = new byte[length];
 		din.readFully(IP_address,0,length);
-		System.out.println(Arrays.toString(IP_address));
 		portNumber = din.readInt();
-		System.out.println(portNumber);
+		
 		
 		baInputStream.close();
 		din.close();

@@ -45,7 +45,7 @@ public  class RegistryReportsDeregistrationStatus implements Event, Protocol{
 		type = din.readByte();
 		length = din.readByte();
 		IP_address = new byte[length];
-		din.readFully(IP_address);
+		din.readFully(IP_address,0,length);
 		portNumber = din.readInt();
 		nodeID = din.readInt();
 		
@@ -64,7 +64,7 @@ public  class RegistryReportsDeregistrationStatus implements Event, Protocol{
 		
 		dout.writeByte(type);
 		dout.writeByte(length);
-		dout.write(IP_address);
+		dout.write(IP_address,0,length);
 		dout.writeInt(portNumber);
 		dout.writeInt(nodeID);
 		dout.flush();

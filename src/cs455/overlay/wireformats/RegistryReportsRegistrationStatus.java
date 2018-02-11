@@ -17,18 +17,18 @@ import java.io.IOException;
  */
 public class RegistryReportsRegistrationStatus implements Event , Protocol{
 	
-	private byte type = REGISTRY_REPORTS_REGISTRATION_STATUS;
+	private int type = REGISTRY_REPORTS_REGISTRATION_STATUS;
 	private int ID = -1;
 	private int length;
 	private String message;
-	
+	private boolean debug = true;
 	/**
 	 * 
 	 */
-	public RegistryReportsRegistrationStatus(byte type, int ID, String message) {
-		this.type = type;
+	public RegistryReportsRegistrationStatus(int ID, String message) {
 		this.ID = ID;
 		this.message = message;
+		this.length = message.length();
 	}
 
 	/**
@@ -36,16 +36,18 @@ public class RegistryReportsRegistrationStatus implements Event , Protocol{
 	 * @param data
 	 */
 	public RegistryReportsRegistrationStatus(byte[] data) throws IOException {
+		if(debug) System.out.println("Entering Constructor");
 		ByteArrayInputStream baInputStream = new ByteArrayInputStream(data);
 		DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
 		
 		type = din.readByte();
 		ID = din.readInt();
-		length = din.readInt();
+		length = din.readByte();
 		byte[] infoMessage = new byte[length];
-		din.readFully(infoMessage);
+		din.readFully(infoMessage,0,length);
 		message = new String(infoMessage);
 		
+		System.out.println(toString());
 		baInputStream.close();
 		din.close();
 	}
@@ -59,9 +61,16 @@ public class RegistryReportsRegistrationStatus implements Event , Protocol{
 		ByteArrayOutputStream baOutputStream = new ByteArrayOutputStream();
 		DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(baOutputStream));
 		
-		dout.writeInt(type);
-		marshalledBytes = baOutputStream.toByteArray();
+		dout.writeByte(type);
+		dout.writeInt(ID);
+		byte[] messagebytes = message.getBytes();
+		int length = messagebytes.length;
+		dout.writeByte(length);
+		dout.write(messagebytes);
 		
+		
+		dout.flush();
+		marshalledBytes = baOutputStream.toByteArray();
 		baOutputStream.close();
 		dout.close();
 		return marshalledBytes;
@@ -73,7 +82,7 @@ public class RegistryReportsRegistrationStatus implements Event , Protocol{
 	 */
 	public int getType() {
 		// TODO Auto-generated method stub
-		return 0;
+		return type;
 	}
 	
 	@Override

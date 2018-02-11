@@ -13,11 +13,10 @@ public class InteractiveCommandParser implements Runnable{
 	private MessagingNode messagingNode;
 	
 	public InteractiveCommandParser(Registry registry) {
-		// TODO Auto-generated constructor stub
 		this.registry = registry;
 	}
 	
-	public InteractiveCommandParser(MessagingNode mNode){
+	public InteractiveCommandParser(MessagingNode mNode) {
 		this.messagingNode = mNode;
 	}
 	

@@ -18,8 +18,8 @@ import java.io.IOException;
  */
 public class OverlayNodeReportsTaskFinished implements Event, Protocol {
 	
-	private byte type = OVERLAY_NODE_REPORTS_TASK_FINISHED;
-	private byte length;
+	private int type = OVERLAY_NODE_REPORTS_TASK_FINISHED;
+	private int length;
 	private byte[] IP_address;
 	private int portNumber;
 	private int nodeID;
@@ -31,8 +31,8 @@ public class OverlayNodeReportsTaskFinished implements Event, Protocol {
 	 * @param portNumber
 	 * @param nodeID
 	 */
-	public OverlayNodeReportsTaskFinished(byte length, byte[] IP_address, int portNumber, int nodeID) {
-		this.length = length;
+	public OverlayNodeReportsTaskFinished(int length, byte[] IP_address, int portNumber, int nodeID) {
+		this.length = IP_address.length;
 		this.IP_address = IP_address;
 		this.portNumber = portNumber;
 		this.nodeID = nodeID;
@@ -42,9 +42,19 @@ public class OverlayNodeReportsTaskFinished implements Event, Protocol {
 	 * constructor to unmarshall the bytes
 	 * @param data
 	 */
-	public OverlayNodeReportsTaskFinished(byte[] data) {
+	public OverlayNodeReportsTaskFinished(byte[] data) throws IOException{
 		ByteArrayInputStream baInputStream = new ByteArrayInputStream(data);
 		DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
+		
+		type = din.readByte();
+		length = din.readByte();
+		IP_address = new byte[length];
+		din.readFully(IP_address,0,length);
+		portNumber = din.readInt();
+		nodeID = din.readInt();
+		
+		baInputStream.close();
+		din.close();
 		
 	}
 	
@@ -56,6 +66,14 @@ public class OverlayNodeReportsTaskFinished implements Event, Protocol {
 		byte[] marshalledBytes = null;
 		ByteArrayOutputStream baOutputStream = new ByteArrayOutputStream();
 		DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(baOutputStream));
+		
+		dout.writeByte(type);
+		dout.writeByte(length);
+		dout.write(IP_address,0,length);
+		dout.writeInt(portNumber);
+		dout.writeInt(nodeID);
+		
+		dout.flush();
 		marshalledBytes = baOutputStream.toByteArray();
 		
 		baOutputStream.close();
@@ -68,8 +86,7 @@ public class OverlayNodeReportsTaskFinished implements Event, Protocol {
 	 * 
 	 */
 	public int getType() {
-		// TODO Auto-generated method stub
-		return 0;
+		return type;
 	}
 	
 	@Override

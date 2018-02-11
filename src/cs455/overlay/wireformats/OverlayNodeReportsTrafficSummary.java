@@ -18,7 +18,7 @@ import java.io.IOException;
  */
 public class OverlayNodeReportsTrafficSummary implements Event, Protocol {
 	
-	private byte type = OVERLAY_NODE_REPORTS_TRAFFIC_SUMMARY;
+	private int type = OVERLAY_NODE_REPORTS_TRAFFIC_SUMMARY;
 	private int assignedNodeId;
 	private int totalSent;
 	private int totalRelayed;

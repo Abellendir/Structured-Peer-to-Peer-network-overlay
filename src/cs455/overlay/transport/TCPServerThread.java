@@ -29,14 +29,16 @@ public class TCPServerThread implements Runnable{
 	 * 
 	 */
 	public void run() {
+		System.out.println("Starting ServerThread");
 		while(serverSocket != null) {
 			try {
 				Socket socket = serverSocket.accept();
 				TCPConnection tcpConnection = new TCPConnection(socket);
 				Thread connection = new Thread(tcpConnection);
 				connection.start();
-				
+				cache.addConnection(tcpConnection);
 				System.out.print("node connects to node\n");
+				
 				
 			} catch (IOException e) {
 				e.printStackTrace();

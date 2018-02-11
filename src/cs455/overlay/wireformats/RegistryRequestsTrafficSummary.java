@@ -18,7 +18,7 @@ import java.io.IOException;
  */
 public class RegistryRequestsTrafficSummary implements Event, Protocol {
 	
-	private byte type = REGISTRY_REQUEST_TRAFFIC_SUMMARY;
+	private int type = REGISTRY_REQUEST_TRAFFIC_SUMMARY;
 
 	/**
 	 * 
@@ -53,6 +53,8 @@ public class RegistryRequestsTrafficSummary implements Event, Protocol {
 		DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(baOutputStream));
 		
 		dout.writeByte(type);
+		
+		dout.flush();
 		marshalledBytes = baOutputStream.toByteArray();
 		
 		baOutputStream.close();
@@ -66,7 +68,7 @@ public class RegistryRequestsTrafficSummary implements Event, Protocol {
 	 */
 	public int getType() {
 		// TODO Auto-generated method stub
-		return 0;
+		return type;
 	}
 
 	@Override

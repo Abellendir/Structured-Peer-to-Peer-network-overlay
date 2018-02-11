@@ -18,7 +18,7 @@ import java.io.IOException;
  */
 public class RegistryRequestTaskInitiate implements Event, Protocol {
 	
-	private byte type = REGISTRY_REQUESTS_TASK_INITIATE;
+	private int type = REGISTRY_REQUESTS_TASK_INITIATE;
 	private int numPacketsToSend;
 	
 	/**
@@ -32,9 +32,15 @@ public class RegistryRequestTaskInitiate implements Event, Protocol {
 	 * constructor to unmarshall the bytes
 	 * @param data
 	 */
-	public RegistryRequestTaskInitiate(byte[] data) {
+	public RegistryRequestTaskInitiate(byte[] data) throws IOException{
 		ByteArrayInputStream baInputStream = new ByteArrayInputStream(data);
 		DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
+		
+		din.readByte();
+		numPacketsToSend = din.readInt();
+		
+		baInputStream.close();
+		din.close();
 		
 	}
 
@@ -49,6 +55,8 @@ public class RegistryRequestTaskInitiate implements Event, Protocol {
 		
 		dout.writeByte(type);
 		dout.writeByte(numPacketsToSend);
+		
+		dout.flush();
 		marshalledBytes = baOutputStream.toByteArray();
 		
 		baOutputStream.close();
@@ -62,7 +70,7 @@ public class RegistryRequestTaskInitiate implements Event, Protocol {
 	 */
 	public int getType() {
 		// TODO Auto-generated method stub
-		return 0;
+		return type;
 	}
 	
 	@Override

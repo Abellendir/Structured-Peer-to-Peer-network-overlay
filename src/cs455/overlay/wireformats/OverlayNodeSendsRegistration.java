@@ -10,6 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * 
@@ -18,8 +19,8 @@ import java.io.IOException;
  */
 public class OverlayNodeSendsRegistration implements Event, Protocol {
 	
-	private byte type = OVERLAY_NODE_SENDS_REGISTRATION;
-	private byte length;
+	private int type = OVERLAY_NODE_SENDS_REGISTRATION;
+	private int length;
 	private byte[] IP_address;
 	private int portNumber;
 	
@@ -27,7 +28,7 @@ public class OverlayNodeSendsRegistration implements Event, Protocol {
 	 * 
 	 * @return
 	 */
-	public byte getLength() {
+	public int getLength() {
 		return length;
 	}
 	
@@ -53,7 +54,8 @@ public class OverlayNodeSendsRegistration implements Event, Protocol {
 	 * @param IP_address
 	 * @param portNumber
 	 */
-	public OverlayNodeSendsRegistration(byte length, byte[] IP_address, int portNumber) {
+	public OverlayNodeSendsRegistration(int length, byte[] IP_address, int portNumber) {
+		System.out.println("Entering OverlayNodeSendsRegistration");
 		this.length = length;
 		this.IP_address = IP_address;
 		this.portNumber = portNumber;
@@ -64,14 +66,16 @@ public class OverlayNodeSendsRegistration implements Event, Protocol {
 	 * @param data
 	 */
 	public OverlayNodeSendsRegistration(byte[] data) throws IOException {
+		
 		ByteArrayInputStream baInputStream = new ByteArrayInputStream(data);
 		DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
 		
 		type = din.readByte();
 		length = din.readByte();
 		IP_address = new byte[length];
-		din.readFully(IP_address);
+		din.readFully(IP_address,0,length);
 		portNumber = din.readInt();
+		
 		
 		baInputStream.close();
 		din.close();
@@ -88,8 +92,8 @@ public class OverlayNodeSendsRegistration implements Event, Protocol {
 		
 		dout.writeByte(type);
 		dout.writeByte(length);
-		dout.write(IP_address);
-		dout.writeByte(portNumber);
+		dout.write(IP_address,0,length);
+		dout.writeInt(portNumber);
 		dout.flush();
 		
 		marshalledBytes = baOutputStream.toByteArray();
@@ -105,7 +109,6 @@ public class OverlayNodeSendsRegistration implements Event, Protocol {
 	 * 
 	 */
 	public int getType() {
-		// TODO Auto-generated method stub
 		return type;
 	}
 	
@@ -116,7 +119,7 @@ public class OverlayNodeSendsRegistration implements Event, Protocol {
 	public String toString() {
 		return "byte: Message Type (" + type + ")" +
 				"\nbyte: length of folling IP address field " + length +
-				"\nbyte[^^]: IP address; " + IP_address +
+				"\nbyte[^^]: IP address; " + Arrays.toString(IP_address) +
 				"\nint: " + portNumber;
 	}
 

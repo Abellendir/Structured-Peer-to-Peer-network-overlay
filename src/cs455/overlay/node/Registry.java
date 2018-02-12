@@ -3,6 +3,7 @@ package cs455.overlay.node;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 import cs455.overlay.routing.RoutingEntry;
@@ -230,8 +231,12 @@ public class Registry implements Node {
 	}
 	
 	public void interactiveCommandEvent(String[] command) {
+		System.out.println(Arrays.toString(command));
+		System.out.println(command[0]);
+		System.out.println(command[1]);
+		String cmd = command[0];
 		int number = Integer.parseInt(command[1]);
-		switch(command[0]) {
+		switch(cmd) {
 			case "setup-overlay": setupOverLay(number);
 			case "start":
 							try {

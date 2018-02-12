@@ -139,9 +139,6 @@ public class MessagingNode implements Node {
 		InteractiveCommandParser interactiveCommandParser = new InteractiveCommandParser(mNode);
 		Thread commandParser = new Thread(interactiveCommandParser);
 		commandParser.start();
-		while(commandParser.isAlive()) {
-			
-		}
 	}
 
 }

@@ -21,4 +21,11 @@ public interface Node {
 	 * @param command
 	 */
 	public void interactiveCommandEvent(String command);
+
+	/**
+	 * 
+	 * @param command
+	 */
+	void interactiveCommandEvent(String[] command);
+	
 }

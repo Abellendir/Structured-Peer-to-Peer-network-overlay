@@ -141,4 +141,10 @@ public class MessagingNode implements Node {
 		commandParser.start();
 	}
 
+	@Override
+	public void interactiveCommandEvent(String[] command) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

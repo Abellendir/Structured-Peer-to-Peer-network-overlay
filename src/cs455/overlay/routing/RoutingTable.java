@@ -63,4 +63,12 @@ public class RoutingTable {
 		}
 		return null;
 	}
+	
+	public int[] allNodes() {
+		int[] all = new int[getSize()];
+		for(int i = 0; i < getSize(); i++) {
+			all[i] = routingTable.get(i).getID();
+		}
+		return all;
+	}
 }

@@ -23,6 +23,7 @@ import cs455.overlay.wireformats.OverlayNodeSendsRegistration;
 import cs455.overlay.wireformats.RegistryReportsRegistrationStatus;
 import cs455.overlay.wireformats.RegistryRequestTaskInitiate;
 import cs455.overlay.wireformats.RegistryRequestsTrafficSummary;
+import cs455.overlay.wireformats.RegistrySendsNodeManifest;
 
 /**
  *
@@ -102,7 +103,6 @@ public class Registry implements Node {
 	}
 
 	private void registryAcknowledgesOverlaySetup(NodeReportsOverlaySetupStatus event) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -156,11 +156,34 @@ public class Registry implements Node {
 	 */
 	private void setupOverLay(int numberEntries){
 		registry.sort();
+		int[] allNodes = registry.allNodes();
 		for(int index = 0; index < registry.getSize(); index++) {
 			RoutingEntry entry = registry.get(index);
 			entry.setTable(createTableForEntry(entry,numberEntries , index));
+			RoutingTable temp = entry.getTable();
+			sendManifest(numberEntries, allNodes, entry, temp);
 		}
 		//ADD the calls to each node with the manifest response;
+	}
+
+	private void sendManifest(int numberEntries, int[] allNodes, RoutingEntry entry, RoutingTable temp) {
+		RegistrySendsNodeManifest send;
+		int[] node = new int[numberEntries];
+		byte[][] IP_addresses = new byte[numberEntries][];
+		int[] portNumber = new int[numberEntries];
+		for(int i = 0; i < temp.getSize(); i++) {
+			RoutingEntry e = temp.get(i);
+			node[i] = e.getID();
+			IP_addresses[i] = e.getIP_address();
+			portNumber[i] = e.getPortNumber();
+			send = new RegistrySendsNodeManifest(node,IP_addresses,portNumber,allNodes);
+			try {
+				e.getConnection().sendData(send.getByte());
+			} catch (IOException e1) {
+				System.out.println("Couldn't setup overlay for node "+ entry.getID());
+				e1.printStackTrace();
+			}
+		}
 	}
 	
 	private RoutingTable createTableForEntry(RoutingEntry routingEntry, int numberEntries, int index) {
@@ -225,11 +248,12 @@ public class Registry implements Node {
 	@Override
 	public void interactiveCommandEvent(String command) {
 		switch(command) {
-		case "list-messaging-nodes": listMessagingNodes();
-		case "list-routing-tables": listRoutingTables();
+		case "list-messaging-nodes": listMessagingNodes();break;
+		case "list-routing-tables": listRoutingTables();break;
 		}
 	}
 	
+	@Override
 	public void interactiveCommandEvent(String[] command) {
 		System.out.println(Arrays.toString(command));
 		System.out.println(command[0]);
@@ -238,6 +262,7 @@ public class Registry implements Node {
 		int number = Integer.parseInt(command[1]);
 		switch(cmd) {
 			case "setup-overlay": setupOverLay(number);
+								break;
 			case "start":
 							try {
 								start(number);
@@ -245,8 +270,9 @@ public class Registry implements Node {
 								e.printStackTrace();
 								System.out.println("Failed to initiate task!");
 							}
+							break;
 			default: System.out.println("Invalid command; valid commands are "
-									+ "\"start\" \"int\" or \"setup-overlay\" \"int\".");
+									+ "\"start\" \"int\" or \"setup-overlay\" \"int\"."); break;
 		}
 	}
 	/**

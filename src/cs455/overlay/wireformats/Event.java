@@ -8,7 +8,7 @@ import java.io.IOException;
  *
  */
 public interface Event {
-
+	
 	/**
 	 * @return 
 	 * @throws IOException 
@@ -28,4 +28,5 @@ public interface Event {
 	 */
 	String toString();
 	
+	int getStatus();
 }

@@ -25,6 +25,7 @@ public class TCPConnection implements Runnable{
 	private TCPConnectionsCache cache = TCPConnectionsCache.getInstance();
 	private byte[] addr;
 	private int port;
+	
     /**
      *
      * @throws IOException 
@@ -34,9 +35,7 @@ public class TCPConnection implements Runnable{
         this.socket = socket;
         InetAddress IP_address = socket.getInetAddress();
         addr = IP_address.getAddress();
-        System.out.println(Arrays.toString(addr));
         port = socket.getPort();
-        System.out.println(port);
         din = new DataInputStream(socket.getInputStream());
         dout = new DataOutputStream(socket.getOutputStream());
 	}
@@ -44,6 +43,7 @@ public class TCPConnection implements Runnable{
 	public byte[] getAddress() {
 		return addr;
 	}
+	
     /**
      *
      */
@@ -55,7 +55,7 @@ public class TCPConnection implements Runnable{
                 dataLength = din.readInt();
                 byte[] data = new byte[dataLength];
                 din.readFully(data,0,dataLength);
-                eventFactory.handleBytes(data);
+                eventFactory.handleBytes(data,addr);
 
             }catch(SocketException se){
                 System.out.println(se.getMessage());

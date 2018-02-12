@@ -25,6 +25,28 @@ public class OverlayNodeReportsTrafficSummary implements Event, Protocol {
 	private long sumSentData;
 	private int totalNumPacketsRec;
 	private long sumPacketsRec;
+	
+
+
+	public int getTotalSent() {
+		return totalSent;
+	}
+
+	public int getTotalRelayed() {
+		return totalRelayed;
+	}
+
+	public long getSumSentData() {
+		return sumSentData;
+	}
+
+	public int getTotalNumPacketsRec() {
+		return totalNumPacketsRec;
+	}
+
+	public long getSumPacketsRec() {
+		return sumPacketsRec;
+	}
 
 	/**
 	 * 
@@ -114,6 +136,12 @@ public class OverlayNodeReportsTrafficSummary implements Event, Protocol {
 				"\nlong: " + this.sumSentData +
 				"\nint: " + this.totalNumPacketsRec +
 				"\nlong: " + this.sumPacketsRec;
+	}
+
+	@Override
+	public int getStatus() {
+		// TODO Auto-generated method stub
+		return assignedNodeId;
 	}
 
 }

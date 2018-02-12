@@ -82,4 +82,10 @@ public class RegistryRequestTaskInitiate implements Event, Protocol {
 				"\nint: " + numPacketsToSend;
 	}
 
+	@Override
+	public int getStatus() {
+		// TODO Auto-generated method stub
+		return numPacketsToSend;
+	}
+
 }

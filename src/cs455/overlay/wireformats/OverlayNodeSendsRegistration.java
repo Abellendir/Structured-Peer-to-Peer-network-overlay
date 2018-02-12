@@ -23,6 +23,7 @@ public class OverlayNodeSendsRegistration implements Event, Protocol {
 	private int length;
 	private byte[] IP_address;
 	private int portNumber;
+	private int status = 0;
 	
 	/**
 	 * 
@@ -110,6 +111,14 @@ public class OverlayNodeSendsRegistration implements Event, Protocol {
 	 */
 	public int getType() {
 		return type;
+	}
+	
+	public int getStatus() {
+		return status;
+	}
+	
+	public void setStatus() {
+		this.status = -1;
 	}
 	
 	@Override

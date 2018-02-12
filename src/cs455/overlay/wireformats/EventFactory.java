@@ -7,6 +7,7 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 import cs455.overlay.node.Node;
 
@@ -16,7 +17,7 @@ import cs455.overlay.node.Node;
  * @author Chemical
  *
  */
-public class EventFactory {
+public class EventFactory implements Protocol {
 
 	private static final EventFactory eventFactory = new EventFactory();
 	private Node node;
@@ -40,15 +41,22 @@ public class EventFactory {
 	 * @param marshalledBytes
 	 * @throws IOException
 	 */
-	public void handleBytes(byte[] marshalledBytes) throws IOException{
+	public void handleBytes(byte[] marshalledBytes, byte[] IP) throws IOException{
 		ByteArrayInputStream baInputStream = new ByteArrayInputStream(marshalledBytes);
 		DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
 		int type = din.readByte();
 		System.out.println(type);
 		try {
 			System.out.println("Entering try block");
-			node.onEvent(Protocol.getEvent(type,marshalledBytes));
-			System.out.println("Event was created");
+			Event event = getEvent(type,marshalledBytes);
+			if(event instanceof OverlayNodeSendsRegistration) {
+				OverlayNodeSendsRegistration nodeTemp = (OverlayNodeSendsRegistration) event;
+				if(!verifyAddress(nodeTemp.getIP_address(), IP)) {
+					nodeTemp.setStatus();
+				}
+				event = nodeTemp;
+			}
+			node.onEvent(event);
 		}catch(IOException e) {
 			System.out.println("Failed to create \"Event\" class");
 			
@@ -57,8 +65,24 @@ public class EventFactory {
 		din.close();
 	}
 	
+
+	/**
+	 * 
+	 * @param node
+	 */
 	public void giveNode(Node node) {
 		this.node = node;
 	}
-
+	
+	/**
+	 * Determines the type of event being received and to send to onEvent
+	 * @param type
+	 * @param marshalledBytes
+	 * @return
+	 * @throws IOException 
+	 */
+	
+	private boolean verifyAddress(byte[] actual, byte[] expected) {
+		return Arrays.equals(actual, expected);
+	}
 }

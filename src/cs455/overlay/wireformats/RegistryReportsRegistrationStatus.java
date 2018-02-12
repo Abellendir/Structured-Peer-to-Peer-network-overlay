@@ -95,4 +95,9 @@ public class RegistryReportsRegistrationStatus implements Event , Protocol{
 				"\nByte: " + length +
 				"\nbyte[^^]: " + message + "\n";
 	}
+
+	@Override
+	public int getStatus() {
+		return ID;
+	}
 }

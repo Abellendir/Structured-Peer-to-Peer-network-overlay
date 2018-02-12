@@ -85,5 +85,13 @@ public class NodeReportsOverlaySetupStatus implements Event, Protocol {
 				"\nint: Success status; " + status +
 				"\nbyte: " +  
 				"\nbyte[^^]: " + informationString;
-	}	
+	}
+
+	@Override
+	public int getStatus() {
+		// TODO Auto-generated method stub
+		return status;
+	}
+
+
 }

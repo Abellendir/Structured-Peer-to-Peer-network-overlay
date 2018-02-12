@@ -22,16 +22,9 @@ public interface Protocol {
 	public static final int REGISTRY_REQUEST_TRAFFIC_SUMMARY = 11;
 	public static final int OVERLAY_NODE_REPORTS_TRAFFIC_SUMMARY = 12;
 	
-	/**
-	 * Determines the type of event being received and to send to onEvent
-	 * @param type
-	 * @param marshalledBytes
-	 * @return
-	 * @throws IOException 
-	 */
-	public static Event getEvent(int type, byte[] marshalledBytes) throws IOException {
+	public default Event getEvent(int type, byte[] marshalledBytes) throws IOException {
 		switch(type) {
-			case OVERLAY_NODE_SENDS_REGISTRATION: System.out.println("Protocal register");
+			case OVERLAY_NODE_SENDS_REGISTRATION:
 				return new OverlayNodeSendsRegistration(marshalledBytes);
 			case REGISTRY_REPORTS_REGISTRATION_STATUS:
 				return new RegistryReportsRegistrationStatus(marshalledBytes);

@@ -6,6 +6,8 @@ package cs455.overlay.routing;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import cs455.overlay.transport.TCPConnection;
+
 /**
  * @author Adam Bellendir
  *
@@ -20,7 +22,7 @@ public class RoutingTable {
 	public RoutingTable() {
 	}
 	
-	public void add(RoutingEntry entry) {
+	public synchronized void add(RoutingEntry entry) {
 		routingTable.add(entry);
 	}
 	
@@ -38,5 +40,27 @@ public class RoutingTable {
 	
 	public boolean contains(RoutingEntry entry) {
 		return routingTable.contains(entry);
+	}
+	
+	public ArrayList<RoutingEntry> getList() {
+		return routingTable;
+	}
+	
+	@Override
+	public String toString() {
+		String table = "";
+		for(int i = 0; i < routingTable.size(); i++) {
+			table += "\n" + routingTable.get(i);
+		}
+		return table;
+	}
+
+	public TCPConnection getConnectionOffID(int nodeID) {
+		for(RoutingEntry entry: routingTable) {
+			if(entry.getID()==nodeID) {
+				return entry.getConnection();
+			}
+		}
+		return null;
 	}
 }

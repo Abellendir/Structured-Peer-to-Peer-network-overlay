@@ -116,4 +116,10 @@ public class OverlayNodeSendsData implements Event, Protocol {
 				"\nint[^^]: " + Arrays.toString(disseminationNodeIDtrace) +
 				"\n";
 	}
+
+	@Override
+	public int getStatus() {
+		// TODO Auto-generated method stub
+		return destinationId;
+	}
 }

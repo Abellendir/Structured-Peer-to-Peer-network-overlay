@@ -3,7 +3,6 @@ package cs455.overlay.node;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 import cs455.overlay.routing.RoutingEntry;
@@ -12,6 +11,7 @@ import cs455.overlay.transport.TCPConnection;
 import cs455.overlay.transport.TCPConnectionsCache;
 import cs455.overlay.transport.TCPServerThread;
 import cs455.overlay.util.InteractiveCommandParser;
+import cs455.overlay.util.StatisticsCollectorAndDisplay;
 import cs455.overlay.wireformats.Event;
 import cs455.overlay.wireformats.EventFactory;
 import cs455.overlay.wireformats.NodeReportsOverlaySetupStatus;
@@ -20,6 +20,8 @@ import cs455.overlay.wireformats.OverlayNodeReportsTrafficSummary;
 import cs455.overlay.wireformats.OverlayNodeSendsDeregistration;
 import cs455.overlay.wireformats.OverlayNodeSendsRegistration;
 import cs455.overlay.wireformats.RegistryReportsRegistrationStatus;
+import cs455.overlay.wireformats.RegistryRequestTaskInitiate;
+import cs455.overlay.wireformats.RegistryRequestsTrafficSummary;
 
 /**
  *
@@ -34,6 +36,7 @@ public class Registry implements Node {
 	private Thread serverThread = null;
 	private EventFactory eventFactory = EventFactory.getInstance();
 	private TCPConnectionsCache tcpConnectionsCache = TCPConnectionsCache.getInstance();
+	private StatisticsCollectorAndDisplay statisticsCollector = new StatisticsCollectorAndDisplay();
 	private ArrayList<Integer> randomizedIDs = new ArrayList<Integer>();
 	private ServerSocket serverSocket;
 	private RoutingTable registry = new RoutingTable();
@@ -76,13 +79,25 @@ public class Registry implements Node {
 	}
 
 	private void overlayNodeReportsSummary(OverlayNodeReportsTrafficSummary event) {
-		// TODO Auto-generated method stub
-		
+		int nodeID = event.getStatus();
+		int sent = event.getTotalSent();
+		int received = event.getTotalNumPacketsRec();
+		int relayed = event.getTotalRelayed();
+		long sumDataSent = event.getSumSentData();
+		long sumDataReceived = event.getSumPacketsRec();
+		statisticsCollector.addData(nodeID,sent,received,relayed,sumDataSent,sumDataReceived);
 	}
 
 	private void overlayNodeReportsDone(OverlayNodeReportsTaskFinished event) {
-		// TODO Auto-generated method stub
-		
+		int nodeID = event.getStatus();
+		RegistryRequestsTrafficSummary send = new RegistryRequestsTrafficSummary();
+		TCPConnection conn = registry.getConnectionOffID(nodeID);
+		try {
+			conn.sendData(send.getByte());
+		} catch (IOException e) {
+			System.out.println("Failled to send request for traffic summary");
+			e.printStackTrace();
+		}
 	}
 
 	private void registryAcknowledgesOverlaySetup(NodeReportsOverlaySetupStatus event) {
@@ -91,6 +106,8 @@ public class Registry implements Node {
 	}
 
 	private void registryDeregistersNode(OverlayNodeSendsDeregistration request) {
+		int node = request.getStatus();
+		
 		
 	}
 	
@@ -104,21 +121,14 @@ public class Registry implements Node {
 	 */
 	public void registerNewNode(OverlayNodeSendsRegistration request) {
 		System.out.println("Register Node");
-		System.out.println(request.toString());
 		RegistryReportsRegistrationStatus send = null;
 		int ID = randomizedIDs.remove(0);
 		TCPConnection conn = tcpConnectionsCache.getConnection(request.getIP_address(),request.getPortNumber());
-		if(conn==null) {
-			System.out.println("NULL connection");
-			return;
-		}
 		RoutingEntry entry = new RoutingEntry(ID,ID,request.getIP_address(),request.getPortNumber(),conn);
 		if(registry.contains(entry)) {
-			System.out.println("ALready registered");
 			send = new RegistryReportsRegistrationStatus(-1,"Already registered with registry");
 			randomizedIDs.add(ID);
-		}else if(!Arrays.equals(request.getIP_address(), conn.getAddress())) {
-			System.out.println("Doesn't match IP");
+		}else if(request.getStatus() == -1) {
 			send = new RegistryReportsRegistrationStatus(-1,"Sent IP Address is different than actual IP address.");
 			randomizedIDs.add(ID);
 		}else{
@@ -127,8 +137,7 @@ public class Registry implements Node {
 		}
 		if(debug)System.out.print(send);
 		try {
-			byte[] bytes = send.getByte();
-			conn.sendData(bytes);
+			conn.sendData(send.getByte());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -138,29 +147,52 @@ public class Registry implements Node {
 	 * 
 	 */
 	private void listMessagingNodes() {
-		
+		System.out.println(registry);
 	}
 	
 	/**
 	 * 
 	 */
-	private void setupOverLayNumberOfRoutingTableEnties(){
-		
+	private void setupOverLay(int numberEntries){
+		registry.sort();
+		for(int index = 0; index < registry.getSize(); index++) {
+			RoutingEntry entry = registry.get(index);
+			entry.setTable(createTableForEntry(entry,numberEntries , index));
+		}
+		//ADD the calls to each node with the manifest response;
 	}
 	
+	private RoutingTable createTableForEntry(RoutingEntry routingEntry, int numberEntries, int index) {
+		RoutingTable entryRoutingTable = new RoutingTable();
+		int size = registry.getSize();
+		for(int i = 0; i < numberEntries; i++) {
+				int offset = (int) Math.pow(2, i);
+				int nextIndex = offset + index;
+				if(nextIndex%size == index) break; //verify
+				
+				entryRoutingTable.add((nextIndex >= size)? registry.get(nextIndex%size) : registry.get(nextIndex));
+		}
+		return entryRoutingTable;
+	}
 	/**
 	 * 
 	 */
 	private void listRoutingTables() {
-		
+		for(int i = 0; i < registry.getSize(); i++) {
+			System.out.println("Routing table for " + registry.get(i));
+			System.out.println(registry.get(i).getTable() + "\n\n\n");
+		}
 	}
 	
 	/**
 	 * 
 	 * @param numberOfMessages
 	 */
-	private void start(int numberOfMessages) {
-		
+	private void start(int numberOfMessages) throws IOException{
+		for(int i = 0; i < registry.getSize(); i++) {
+			RegistryRequestTaskInitiate request = new RegistryRequestTaskInitiate(numberOfMessages);
+			registry.get(i).getConnection().sendData(request.getByte());
+		}
 	}
 
     /**
@@ -191,8 +223,26 @@ public class Registry implements Node {
 	
 	@Override
 	public void interactiveCommandEvent(String command) {
-		// TODO Auto-generated method stub
-		
+		switch(command) {
+		case "list-messaging-nodes": listMessagingNodes();
+		case "list-routing-tables": listRoutingTables();
+		}
+	}
+	
+	public void interactiveCommandEvent(String[] command) {
+		int number = Integer.parseInt(command[1]);
+		switch(command[0]) {
+			case "setup-overlay": setupOverLay(number);
+			case "start":
+							try {
+								start(number);
+							} catch (IOException e ) {
+								e.printStackTrace();
+								System.out.println("Failed to initiate task!");
+							}
+			default: System.out.println("Invalid command; valid commands are "
+									+ "\"start\" \"int\" or \"setup-overlay\" \"int\".");
+		}
 	}
 	/**
 	 * 
@@ -204,9 +254,5 @@ public class Registry implements Node {
 		InteractiveCommandParser commandParser = new InteractiveCommandParser(registry);
 		Thread interactiveCommandParser = new Thread(commandParser);
 		interactiveCommandParser.start();
-		while(interactiveCommandParser.isAlive()) {
-			
-		}
 	}
-
 }

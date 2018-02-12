@@ -93,4 +93,10 @@ public  class RegistryReportsDeregistrationStatus implements Event, Protocol{
 	public String toString() {
 		return null;
 	}
+
+	@Override
+	public int getStatus() {
+		// TODO Auto-generated method stub
+		return nodeID;
+	}
 }

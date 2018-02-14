@@ -18,6 +18,8 @@ import cs455.overlay.transport.TCPServerThread;
 import cs455.overlay.util.InteractiveCommandParser;
 import cs455.overlay.wireformats.Event;
 import cs455.overlay.wireformats.EventFactory;
+import cs455.overlay.wireformats.NodeReportsOverlaySetupStatus;
+import cs455.overlay.wireformats.OverlayNodeSendsData;
 import cs455.overlay.wireformats.OverlayNodeSendsRegistration;
 import cs455.overlay.wireformats.RegistryReportsRegistrationStatus;
 import cs455.overlay.wireformats.RegistryRequestsTaskInitiate;
@@ -51,7 +53,7 @@ public class MessagingNode implements Node {
 			IP_address = InetAddress.getLocalHost().getAddress();
 			serverSocket = new ServerSocket(0);
 			this.portNumber = serverSocket.getLocalPort();
-			System.out.println("Initialized address in bytes:" + Arrays.toString(IP_address) + "\nAddress as InetAddress: " + InetAddress.getLocalHost());
+			System.out.println("Initialized address in bytes:" + Arrays.toString(IP_address));
 			System.out.println("On port: " + portNumber);
 		} catch (UnknownHostException e) {
 			System.out.println("\nUnknownHostException in constructor");
@@ -73,6 +75,8 @@ public class MessagingNode implements Node {
 				break;
 		case 8: registryRequestsTaskInitiate((RegistryRequestsTaskInitiate) event);
 				break;
+		case 9: overlayNodeSendsData((OverlayNodeSendsData) event);
+				break;
 		case 11: registryRequestsTrafficSummary((RegistryRequestsTrafficSummary) event);
 				 break;
 		default: break;
@@ -80,22 +84,27 @@ public class MessagingNode implements Node {
 		
 	}
 	
-	private void registryRequestsTrafficSummary(RegistryRequestsTrafficSummary event) {
+	private synchronized void overlayNodeSendsData(OverlayNodeSendsData event) {
+		
+	}
+
+	private synchronized void registryRequestsTrafficSummary(RegistryRequestsTrafficSummary event) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	private void registryRequestsTaskInitiate(RegistryRequestsTaskInitiate event) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	private void registrySendsNodeManifest(RegistrySendsNodeManifest event){
 		System.out.print(event);
-		
+		int status = this.nodeID;
 		int[] nodeID = event.getNodeID();
 		byte[][] IP = event.getIP_addresses();
 		int[] ports = event.getPortNumbers();
+		allNodes = event.getAllNodes();
 		for(int i = 0; i < nodeID.length;i++) {
 			try {
 				InetAddress addr = InetAddress.getByAddress(IP[i]);
@@ -106,10 +115,24 @@ public class MessagingNode implements Node {
 				RoutingEntry entry = new RoutingEntry(nodeID[i],IP[i],ports[i],conn);
 				routingTable.add(entry);
 			} catch (UnknownHostException e) {
+				status = -1;
 				e.printStackTrace();
 			} catch (IOException e) {
+				status = -1;
 				e.printStackTrace();
 			}
+		}
+		NodeReportsOverlaySetupStatus send;
+		if(status == -1) {
+			send = new NodeReportsOverlaySetupStatus(status,"Node unsuccessful in setting up overlay");
+		}else {
+			send = new NodeReportsOverlaySetupStatus(status,"Successfully Setup overlay");
+		}
+		try {
+			cache.getRegistry().sendData(send.getByte());
+		} catch (IOException e) {
+			System.out.println("Was unable to send response");
+			e.printStackTrace();
 		}
 	}
 

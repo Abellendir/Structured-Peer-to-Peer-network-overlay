@@ -260,6 +260,11 @@ public class Registry implements Node {
 		switch(command) {
 		case "list-messaging-nodes": listMessagingNodes();break;
 		case "list-routing-tables": listRoutingTables();break;
+		default: System.out.println("Invalid command; valid commands are "
+				+ "\n\"start\" \"int\""
+				+ "\n\"setup-overlay\" \"int\""
+				+ "\n\"list-messaging-nodes\""
+				+ "\n\"list-routing-tables\"."); break;
 		}
 	}
 	
@@ -279,7 +284,10 @@ public class Registry implements Node {
 							}
 							break;
 			default: System.out.println("Invalid command; valid commands are "
-									+ "\"start\" \"int\" or \"setup-overlay\" \"int\"."); break;
+									+ "\n\"start\" \"int\""
+									+ "\n\"setup-overlay\" \"int\""
+									+ "\n\"list-messaging-nodes\""
+									+ "\n\"list-routing-tables\"."); break;
 		}
 	}
 	/**

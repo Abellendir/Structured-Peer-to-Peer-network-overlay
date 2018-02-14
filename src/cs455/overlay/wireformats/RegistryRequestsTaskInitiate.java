@@ -54,7 +54,7 @@ public class RegistryRequestsTaskInitiate implements Event, Protocol {
 		DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(baOutputStream));
 		
 		dout.writeByte(type);
-		dout.writeByte(numPacketsToSend);
+		dout.writeInt(numPacketsToSend);
 		
 		dout.flush();
 		marshalledBytes = baOutputStream.toByteArray();

@@ -20,8 +20,9 @@ import cs455.overlay.wireformats.OverlayNodeReportsTaskFinished;
 import cs455.overlay.wireformats.OverlayNodeReportsTrafficSummary;
 import cs455.overlay.wireformats.OverlayNodeSendsDeregistration;
 import cs455.overlay.wireformats.OverlayNodeSendsRegistration;
+import cs455.overlay.wireformats.RegistryReportsDeregistrationStatus;
 import cs455.overlay.wireformats.RegistryReportsRegistrationStatus;
-import cs455.overlay.wireformats.RegistryRequestTaskInitiate;
+import cs455.overlay.wireformats.RegistryRequestsTaskInitiate;
 import cs455.overlay.wireformats.RegistryRequestsTrafficSummary;
 import cs455.overlay.wireformats.RegistrySendsNodeManifest;
 
@@ -36,28 +37,18 @@ public class Registry implements Node {
 	
 	private boolean debug = true;
 	private Thread serverThread = null;
-	private EventFactory eventFactory = EventFactory.getInstance();
-	private TCPConnectionsCache tcpConnectionsCache = TCPConnectionsCache.getInstance();
-	private StatisticsCollectorAndDisplay statisticsCollector = new StatisticsCollectorAndDisplay();
-	private ArrayList<Integer> randomizedIDs = new ArrayList<Integer>();
+	private final TCPConnectionsCache tcpConnectionsCache = TCPConnectionsCache.getInstance();
+	private final StatisticsCollectorAndDisplay statisticsCollector = new StatisticsCollectorAndDisplay();
+	private final ArrayList<Integer> randomizedIDs = new ArrayList<Integer>();
 	private ServerSocket serverSocket;
-	private RoutingTable registry = new RoutingTable();
+	private final RoutingTable registry = new RoutingTable();
 	
 	/**
 	 * @throws IOException 
 	 * 
 	 */
 	public Registry(int registryPortNumber) {
-		try {
-			startServerThread(registryPortNumber);
-			eventFactory.giveNode(this);
-			intitializeRandomArrayListOfIDs();
-			
-		} catch (IOException e) {
-			System.out.print("DEAD");
-			e.printStackTrace();
-		}
-		eventFactory.giveNode(this);
+		intitializeRandomArrayListOfIDs();
 	}
 	
 	private void intitializeRandomArrayListOfIDs() {
@@ -69,10 +60,14 @@ public class Registry implements Node {
 
 	@Override
 	public void onEvent(Event event) {
-		System.out.println(event.getType());
 		switch(event.getType()) {
 		case 2: registerNewNode((OverlayNodeSendsRegistration) event); break;
-		case 4: registryDeregistersNode((OverlayNodeSendsDeregistration) event); break;
+		case 4: try {
+				registryDeregistersNode((OverlayNodeSendsDeregistration) event);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} break;
 		case 7: registryAcknowledgesOverlaySetup((NodeReportsOverlaySetupStatus) event); break;
 		case 10: overlayNodeReportsDone((OverlayNodeReportsTaskFinished) event); break;
 		case 12: overlayNodeReportsSummary((OverlayNodeReportsTrafficSummary) event); break;
@@ -81,6 +76,7 @@ public class Registry implements Node {
 	}
 
 	private void overlayNodeReportsSummary(OverlayNodeReportsTrafficSummary event) {
+		System.out.println(event);
 		int nodeID = event.getStatus();
 		int sent = event.getTotalSent();
 		int received = event.getTotalNumPacketsRec();
@@ -91,6 +87,7 @@ public class Registry implements Node {
 	}
 
 	private void overlayNodeReportsDone(OverlayNodeReportsTaskFinished event) {
+		System.out.println(event);
 		int nodeID = event.getStatus();
 		RegistryRequestsTrafficSummary send = new RegistryRequestsTrafficSummary();
 		TCPConnection conn = registry.getConnectionOffID(nodeID);
@@ -103,13 +100,32 @@ public class Registry implements Node {
 	}
 
 	private void registryAcknowledgesOverlaySetup(NodeReportsOverlaySetupStatus event) {
-		
+		System.out.println(event);
 	}
 
-	private void registryDeregistersNode(OverlayNodeSendsDeregistration request) {
-		int node = request.getStatus();
-		
-		
+	private void registryDeregistersNode(OverlayNodeSendsDeregistration request) throws IOException{
+		System.out.println(request);
+		int nodeID = request.getStatus();
+		RegistryReportsDeregistrationStatus send = new RegistryReportsDeregistrationStatus(nodeID,"Deregistartion was successful of node " + nodeID);
+		if(request.getStatus() == -1) {
+			send.setMessage("Deregistration unsuccessful due to mismatch of IP actual and expected");
+			System.out.println(send);
+			registry.getConnectionOffID(nodeID).sendData(send.getByte());
+			return;
+		}
+		if(!registry.contains(nodeID)) {
+			send.setMessage("Deregistration unsuccessful; node is not contained in registry.");
+			System.out.println(send);
+			TCPConnection conn = tcpConnectionsCache.getConnection(request.getIP_address(),request.getPortNumber());
+			conn.sendData(send.getByte());
+			return;
+		}
+		TCPConnection conn = registry.getConnectionOffID(nodeID);
+		registry.remove(nodeID);
+		randomizedIDs.add(nodeID);
+		System.out.println(send);
+		conn.sendData(send.getByte());
+		System.out.println("Removed node "+ nodeID);
 	}
 	
 	/**
@@ -121,11 +137,12 @@ public class Registry implements Node {
 	 * @param request
 	 */
 	public void registerNewNode(OverlayNodeSendsRegistration request) {
-		System.out.println("Register Node");
+		System.out.println(request);
+		System.out.println("Registering Node");
 		RegistryReportsRegistrationStatus send = null;
 		int ID = randomizedIDs.remove(0);
 		TCPConnection conn = tcpConnectionsCache.getConnection(request.getIP_address(),request.getPortNumber());
-		RoutingEntry entry = new RoutingEntry(ID,ID,request.getIP_address(),request.getPortNumber(),conn);
+		RoutingEntry entry = new RoutingEntry(ID,request.getIP_address(),request.getPortNumber(),conn);
 		if(registry.contains(entry)) {
 			send = new RegistryReportsRegistrationStatus(-1,"Already registered with registry");
 			randomizedIDs.add(ID);
@@ -136,7 +153,7 @@ public class Registry implements Node {
 			registry.add(entry);
 			send = new RegistryReportsRegistrationStatus(ID,"Registration request successful. Number of registered nodes is (" + registry.getSize() +").");
 		}
-		if(debug)System.out.print(send);
+		System.out.print(send);
 		try {
 			conn.sendData(send.getByte());
 		} catch (IOException e) {
@@ -157,33 +174,27 @@ public class Registry implements Node {
 	private void setupOverLay(int numberEntries){
 		registry.sort();
 		int[] allNodes = registry.allNodes();
+		System.out.println(Arrays.toString(allNodes));
 		for(int index = 0; index < registry.getSize(); index++) {
 			RoutingEntry entry = registry.get(index);
+			System.out.println("Table for: " + entry);
 			entry.setTable(createTableForEntry(entry,numberEntries , index));
+			System.out.println(entry.getTable());
 			RoutingTable temp = entry.getTable();
-			sendManifest(numberEntries, allNodes, entry, temp);
+				try {
+					sendManifest(numberEntries, allNodes, entry, temp);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 		}
 		//ADD the calls to each node with the manifest response;
 	}
 
-	private void sendManifest(int numberEntries, int[] allNodes, RoutingEntry entry, RoutingTable temp) {
-		RegistrySendsNodeManifest send;
-		int[] node = new int[numberEntries];
-		byte[][] IP_addresses = new byte[numberEntries][];
-		int[] portNumber = new int[numberEntries];
-		for(int i = 0; i < temp.getSize(); i++) {
-			RoutingEntry e = temp.get(i);
-			node[i] = e.getID();
-			IP_addresses[i] = e.getIP_address();
-			portNumber[i] = e.getPortNumber();
-			send = new RegistrySendsNodeManifest(node,IP_addresses,portNumber,allNodes);
-			try {
-				e.getConnection().sendData(send.getByte());
-			} catch (IOException e1) {
-				System.out.println("Couldn't setup overlay for node "+ entry.getID());
-				e1.printStackTrace();
-			}
-		}
+	private void sendManifest(int numberEntries, int[] allNodes, RoutingEntry entry, RoutingTable temp) throws IOException{
+		RegistrySendsNodeManifest send = new RegistrySendsNodeManifest(entry,allNodes,numberEntries);
+		System.out.print(send);
+		entry.getConnection().sendData(send.getByte());
 	}
 	
 	private RoutingTable createTableForEntry(RoutingEntry routingEntry, int numberEntries, int index) {
@@ -193,7 +204,6 @@ public class Registry implements Node {
 				int offset = (int) Math.pow(2, i);
 				int nextIndex = offset + index;
 				if(nextIndex%size == index) break; //verify
-				
 				entryRoutingTable.add((nextIndex >= size)? registry.get(nextIndex%size) : registry.get(nextIndex));
 		}
 		return entryRoutingTable;
@@ -214,7 +224,7 @@ public class Registry implements Node {
 	 */
 	private void start(int numberOfMessages) throws IOException{
 		for(int i = 0; i < registry.getSize(); i++) {
-			RegistryRequestTaskInitiate request = new RegistryRequestTaskInitiate(numberOfMessages);
+			RegistryRequestsTaskInitiate request = new RegistryRequestsTaskInitiate(numberOfMessages);
 			registry.get(i).getConnection().sendData(request.getByte());
 		}
 	}
@@ -230,7 +240,7 @@ public class Registry implements Node {
 		TCPServerThread tcpServerThread = new TCPServerThread(serverSocket);
 		serverThread = new Thread(tcpServerThread);
 		serverThread.start();
-		tcpConnectionsCache.addServerConnection(serverThread);
+		tcpConnectionsCache.addServerConnection(tcpServerThread);
 	}
 	
 	/**
@@ -255,9 +265,6 @@ public class Registry implements Node {
 	
 	@Override
 	public void interactiveCommandEvent(String[] command) {
-		System.out.println(Arrays.toString(command));
-		System.out.println(command[0]);
-		System.out.println(command[1]);
 		String cmd = command[0];
 		int number = Integer.parseInt(command[1]);
 		switch(cmd) {
@@ -282,6 +289,17 @@ public class Registry implements Node {
 	public static void main(String [] args) {
 		System.out.println("Starting Registry");
 		Registry registry = new Registry(Integer.parseInt(args[0]));
+		try {
+			registry.startServerThread(Integer.parseInt(args[0]));
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		EventFactory eventFactory = EventFactory.getInstance();
+		eventFactory.giveNode(registry);
 		InteractiveCommandParser commandParser = new InteractiveCommandParser(registry);
 		Thread interactiveCommandParser = new Thread(commandParser);
 		interactiveCommandParser.start();

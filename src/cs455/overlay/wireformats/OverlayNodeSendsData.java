@@ -108,13 +108,13 @@ public class OverlayNodeSendsData implements Event, Protocol {
 	 * 
 	 */
 	public String toString() {
-		return "\nbyte: Message Type; " + type + 
+		return "\n\nbyte: Message Type; " + type + 
 				"\nint: " + destinationId + 
 				"\nint: " + sourceId +
 				"\nint: " + payload +
 				"\nint: " + disseminationTraceLength +
 				"\nint[^^]: " + Arrays.toString(disseminationNodeIDtrace) +
-				"\n";
+				"\n\n";
 	}
 
 	@Override

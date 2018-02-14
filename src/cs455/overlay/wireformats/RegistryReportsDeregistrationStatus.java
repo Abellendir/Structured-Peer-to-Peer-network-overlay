@@ -19,19 +19,19 @@ import java.io.IOException;
 public  class RegistryReportsDeregistrationStatus implements Event, Protocol{
 	
 	private int type = REGISTRY_REPORTS_DEREGISTRATION_STATUS;
-	private byte length;
-	private byte[] IP_address;
-	private int portNumber;
-	private int nodeID;
+	private int ID;
+	private int length;
+	private String message;
 
+	public void setMessage() {
+		
+	}
 	/**
 	 * 
 	 */
-	public RegistryReportsDeregistrationStatus(byte[] IP_address, int portNumber, int nodeID) {
-		this.length = (byte) IP_address.length;
-		this.IP_address = IP_address;
-		this.portNumber = portNumber;
-		this.nodeID = nodeID;
+	public RegistryReportsDeregistrationStatus(int ID, String message) {
+		this.ID = ID;
+		this.message = message;
 	}
 
 	/**
@@ -43,11 +43,11 @@ public  class RegistryReportsDeregistrationStatus implements Event, Protocol{
 		DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
 		
 		type = din.readByte();
+		ID = din.readInt();
 		length = din.readByte();
-		IP_address = new byte[length];
-		din.readFully(IP_address,0,length);
-		portNumber = din.readInt();
-		nodeID = din.readInt();
+		byte[] infoMessage = new byte[length];
+		din.readFully(infoMessage,0,length);
+		message = new String(infoMessage);
 		
 		baInputStream.close();
 		din.close();
@@ -63,10 +63,12 @@ public  class RegistryReportsDeregistrationStatus implements Event, Protocol{
 		DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(baOutputStream));
 		
 		dout.writeByte(type);
+		dout.writeInt(ID);
+		byte[] messagebytes = message.getBytes();
+		int length = messagebytes.length;
 		dout.writeByte(length);
-		dout.write(IP_address,0,length);
-		dout.writeInt(portNumber);
-		dout.writeInt(nodeID);
+		dout.write(messagebytes);
+		
 		dout.flush();
 		
 		marshalledBytes = baOutputStream.toByteArray();
@@ -91,12 +93,19 @@ public  class RegistryReportsDeregistrationStatus implements Event, Protocol{
 	 * 
 	 */
 	public String toString() {
-		return null;
+		return "\n\nbyte: Message type" + this.type +
+				"\nint: " + this.getStatus() +
+				"\nbyte: " + this.length +
+				"\nbyte[^^}" + message + "\n\n";
 	}
 
 	@Override
 	public int getStatus() {
 		// TODO Auto-generated method stub
-		return nodeID;
+		return ID;
+	}
+	
+	public void setMessage(String message) {
+		this.message = message;
 	}
 }

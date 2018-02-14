@@ -10,6 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * 
@@ -94,7 +95,11 @@ public class OverlayNodeReportsTaskFinished implements Event, Protocol {
 	 * 
 	 */
 	public String toString() {
-		return null;
+		return "\n\nbyte: Message type; " + this.type 
+				+ "\nbyte: " + this.length 
+				+ "\nbyte[^^]: " + Arrays.toString(this.IP_address) 
+				+ "\nint: " + this.portNumber
+				+ "\nint: " + this.nodeID + "\n\n";
 	}
 
 	@Override

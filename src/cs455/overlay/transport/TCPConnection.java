@@ -35,6 +35,7 @@ public class TCPConnection implements Runnable{
         this.socket = socket;
         InetAddress IP_address = socket.getInetAddress();
         addr = IP_address.getAddress();
+        System.out.println("Address in TCPConnection: " + Arrays.toString(addr));
         port = socket.getPort();
         din = new DataInputStream(socket.getInputStream());
         dout = new DataOutputStream(socket.getOutputStream());
@@ -50,12 +51,11 @@ public class TCPConnection implements Runnable{
     public void run() {
         int dataLength;
         while(socket != null){
-        	System.out.println("Recieved");
             try{
                 dataLength = din.readInt();
                 byte[] data = new byte[dataLength];
                 din.readFully(data,0,dataLength);
-                eventFactory.handleBytes(data,addr);
+                eventFactory.handleBytes(data,addr,port);
 
             }catch(SocketException se){
                 System.out.println(se.getMessage());

@@ -16,8 +16,9 @@ public class InteractiveCommandParser implements Runnable{
 	}
 	
 	public void run() {
-		while(true) {
-			String[] command = scan.nextLine().split(" ");
+		String[] command = {"",""};
+		while(command[0] != "quit") {
+			command = scan.nextLine().split(" ");
 			if(command.length == 2) {
 				node.interactiveCommandEvent(command);
 			}else {

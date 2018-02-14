@@ -126,10 +126,10 @@ public class OverlayNodeSendsRegistration implements Event, Protocol {
 	 * 
 	 */
 	public String toString() {
-		return "byte: Message Type (" + type + ")" +
+		return "\n\nbyte: Message Type (" + type + ")" +
 				"\nbyte: length of folling IP address field " + length +
 				"\nbyte[^^]: IP address; " + Arrays.toString(IP_address) +
-				"\nint: " + portNumber;
+				"\nint: " + portNumber + "\n\n";
 	}
 
 }

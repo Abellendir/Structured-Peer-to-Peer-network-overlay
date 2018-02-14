@@ -5,6 +5,7 @@ package cs455.overlay.routing;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import cs455.overlay.transport.TCPConnection;
 
@@ -14,7 +15,8 @@ import cs455.overlay.transport.TCPConnection;
  */
 public class RoutingTable {
 
-	private ArrayList<RoutingEntry> routingTable = new ArrayList<RoutingEntry>();
+	//private ArrayList<RoutingEntry> routingTable = new ArrayList<RoutingEntry>();
+	private List<RoutingEntry> routingTable = Collections.synchronizedList(new ArrayList<RoutingEntry>());
 	
 	/**
 	 * 
@@ -22,7 +24,7 @@ public class RoutingTable {
 	public RoutingTable() {
 	}
 	
-	public synchronized void add(RoutingEntry entry) {
+	public void add(RoutingEntry entry) {
 		routingTable.add(entry);
 	}
 	
@@ -42,7 +44,7 @@ public class RoutingTable {
 		return routingTable.contains(entry);
 	}
 	
-	public ArrayList<RoutingEntry> getList() {
+	public List<RoutingEntry> getList() {
 		return routingTable;
 	}
 	
@@ -54,7 +56,15 @@ public class RoutingTable {
 		}
 		return table;
 	}
-
+	
+	public void remove(int nodeId) {
+		for(RoutingEntry entry: routingTable) {
+			if(entry.getID()==nodeId) {
+				routingTable.remove(entry);
+			}
+		}
+	}
+	
 	public TCPConnection getConnectionOffID(int nodeID) {
 		for(RoutingEntry entry: routingTable) {
 			if(entry.getID()==nodeID) {
@@ -70,5 +80,14 @@ public class RoutingTable {
 			all[i] = routingTable.get(i).getID();
 		}
 		return all;
+	}
+
+	public boolean contains(int nodeID) {
+		for(RoutingEntry entry: routingTable) {
+			if(entry.getID() == nodeID) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

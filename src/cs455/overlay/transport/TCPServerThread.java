@@ -37,8 +37,6 @@ public class TCPServerThread implements Runnable{
 				Thread connection = new Thread(tcpConnection);
 				connection.start();
 				cache.addConnection(tcpConnection);
-				System.out.print("node connects to node\n");
-				
 				
 			} catch (IOException e) {
 				e.printStackTrace();

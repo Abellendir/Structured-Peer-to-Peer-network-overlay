@@ -1,31 +1,21 @@
 package cs455.overlay.routing;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Arrays;
 
 import cs455.overlay.transport.TCPConnection;
 
 public class RoutingEntry implements Comparable<RoutingEntry>{
 	
-	private int ID;
+	private final int ID;
 	private int index;
-	private byte[] IP_address;
-	private InetAddress addr;
-	private int portNumber;
-	private TCPConnection conn;
+	private final byte[] IP_address;
+	private final int portNumber;
+	private final TCPConnection conn;
 	private RoutingTable table;
 	
-	public RoutingEntry(int ID, int index, byte[] IP_address, int portNumber, TCPConnection tcpConnection) {
+	public RoutingEntry(int ID, byte[] IP_address, int portNumber, TCPConnection tcpConnection){
 		this.ID = ID;
-		this.index = index;
 		this.IP_address = IP_address;
-		try {
-			this.addr = InetAddress.getByAddress(IP_address);
-		} catch (UnknownHostException e) {
-			System.out.println("Node (" + ID +") Failed to convert to InetAddress for printing");
-			e.printStackTrace();
-		}
 		this.portNumber = portNumber;
 		this.conn = tcpConnection;
 	}
@@ -81,7 +71,7 @@ public class RoutingEntry implements Comparable<RoutingEntry>{
 	
 	@Override
 	public String toString() {
-		return "Node ID: (" + ID + ") IP: (" + addr +") Port Number: (" + portNumber + ")";
+		return "Node ID: (" + ID + ") IP: (" + Arrays.toString(IP_address) +") Port Number: (" + portNumber + ")";
 	}
 
 }

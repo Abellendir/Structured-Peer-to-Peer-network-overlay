@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class TCPConnectionsCache {
 	
-	private Thread serverThread = null;
+	private TCPServerThread serverThread = null;
 	private static List<TCPConnection> tcpConnectionsCache = new ArrayList<TCPConnection>();
 	private TCPConnection registry;
 	private static final TCPConnectionsCache cache = new TCPConnectionsCache();
@@ -40,7 +40,6 @@ public class TCPConnectionsCache {
 	 */
 	public synchronized TCPConnection getConnection(byte[] addr, int portNumber) {
 		for(TCPConnection conn: tcpConnectionsCache) {
-			System.out.println(conn.toString());
 			if(Arrays.equals(addr, conn.getAddress()) && portNumber == conn.getPortNumber()) {
 				return conn;
 			}
@@ -60,7 +59,7 @@ public class TCPConnectionsCache {
 	 * 
 	 * @param serverThread
 	 */
-	public void addServerConnection(Thread serverThread) {
+	public void addServerConnection(TCPServerThread serverThread) {
 		this.serverThread = serverThread;
 	}
 	
@@ -68,7 +67,7 @@ public class TCPConnectionsCache {
 	 * 
 	 * @return
 	 */
-	public Thread getServerThread() {
+	public TCPServerThread getServerThread() {
 		return serverThread;
 	}
 	
@@ -96,7 +95,7 @@ public class TCPConnectionsCache {
 		return registry;
 	}
 
-	public void remove(TCPConnection tcpConnection) {
+	public synchronized void remove(TCPConnection tcpConnection) {
 		tcpConnectionsCache.remove(tcpConnection);
 	}
 }

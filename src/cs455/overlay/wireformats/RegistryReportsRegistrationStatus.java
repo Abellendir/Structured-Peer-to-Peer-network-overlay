@@ -46,8 +46,6 @@ public class RegistryReportsRegistrationStatus implements Event , Protocol{
 		byte[] infoMessage = new byte[length];
 		din.readFully(infoMessage,0,length);
 		message = new String(infoMessage);
-		
-		System.out.println(toString());
 		baInputStream.close();
 		din.close();
 	}
@@ -90,10 +88,10 @@ public class RegistryReportsRegistrationStatus implements Event , Protocol{
 	 * 
 	 */
 	public String toString() {
-		return "byte: Message Type (" + type + ")" +
+		return "\n\nbyte: Message Type (" + type + ")" +
 				"\nint: Success status; " + ID +
 				"\nByte: " + length +
-				"\nbyte[^^]: " + message + "\n";
+				"\nbyte[^^]: " + message + "\n\n";
 	}
 
 	@Override

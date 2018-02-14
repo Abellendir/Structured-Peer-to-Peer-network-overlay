@@ -39,15 +39,14 @@ public class EventFactory implements Protocol {
 	/**
 	 * 
 	 * @param marshalledBytes
+	 * @param port 
 	 * @throws IOException
 	 */
-	public void handleBytes(byte[] marshalledBytes, byte[] IP) throws IOException{
+	public void handleBytes(byte[] marshalledBytes, byte[] IP, int port) throws IOException{
 		ByteArrayInputStream baInputStream = new ByteArrayInputStream(marshalledBytes);
 		DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
 		int type = din.readByte();
-		System.out.println(type);
 		try {
-			System.out.println("Entering try block");
 			Event event = getEvent(type,marshalledBytes);
 			if(event instanceof OverlayNodeSendsRegistration) {
 				OverlayNodeSendsRegistration nodeTemp = (OverlayNodeSendsRegistration) event;
@@ -55,6 +54,12 @@ public class EventFactory implements Protocol {
 					nodeTemp.setStatus();
 				}
 				event = nodeTemp;
+			}
+			if(event instanceof OverlayNodeSendsDeregistration) {
+				OverlayNodeSendsDeregistration node = (OverlayNodeSendsDeregistration) event;
+				if(!verifyAddress(node.getIP_address(),IP)) {
+					node.setStatus();
+				}
 			}
 			node.onEvent(event);
 		}catch(IOException e) {

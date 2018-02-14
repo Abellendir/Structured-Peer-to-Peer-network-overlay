@@ -37,7 +37,7 @@ public interface Protocol {
 			case NODE_REPORTS_OVERLAY_SETUP_STATUS:      
 				return new NodeReportsOverlaySetupStatus(marshalledBytes);
 			case REGISTRY_REQUESTS_TASK_INITIATE:        
-				return new RegistryRequestTaskInitiate(marshalledBytes);
+				return new RegistryRequestsTaskInitiate(marshalledBytes);
 			case OVERLAY_NODE_SENDS_DATA:                
 				return new OverlayNodeSendsData(marshalledBytes);
 			case OVERLAY_NODE_REPORTS_TASK_FINISHED: 	 

@@ -10,6 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * 
@@ -23,6 +24,7 @@ public class OverlayNodeSendsDeregistration implements Event , Protocol {
 	private byte[] IP_address;
 	private int portNumber;
 	private int nodeID;
+	private int status;
 
 	/**
 	 * 
@@ -89,12 +91,35 @@ public class OverlayNodeSendsDeregistration implements Event , Protocol {
 	 * 
 	 */
 	public String toString() {
-		return null;
+		return "\n\nbyte: Message type; " + this.type +
+				"\nbyte: " + this.length +
+				"\nbyte[^^]: " + Arrays.toString(this.IP_address) +
+				"\nint: " + this.portNumber +
+				"\nint: " + this.nodeID + "\n\n";
 	}
 
 	@Override
 	public int getStatus() {
-		// TODO Auto-generated method stub
+		return status;
+	}
+
+	public int getLength() {
+		return length;
+	}
+
+	public byte[] getIP_address() {
+		return IP_address;
+	}
+
+	public int getPortNumber() {
+		return portNumber;
+	}
+
+	public int getNodeID() {
 		return nodeID;
+	}
+	
+	public void setStatus() {
+		this.status = -1;
 	}
 }

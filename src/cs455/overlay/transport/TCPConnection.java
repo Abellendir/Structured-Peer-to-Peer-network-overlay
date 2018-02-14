@@ -35,7 +35,7 @@ public class TCPConnection implements Runnable{
         this.socket = socket;
         InetAddress IP_address = socket.getInetAddress();
         addr = IP_address.getAddress();
-        System.out.println("Address in TCPConnection: " + Arrays.toString(addr));
+        System.out.println("Address of incoming Node: " + Arrays.toString(addr));
         port = socket.getPort();
         din = new DataInputStream(socket.getInputStream());
         dout = new DataOutputStream(socket.getOutputStream());

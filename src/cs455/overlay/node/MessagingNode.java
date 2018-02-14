@@ -51,7 +51,7 @@ public class MessagingNode implements Node {
 			IP_address = InetAddress.getLocalHost().getAddress();
 			serverSocket = new ServerSocket(0);
 			this.portNumber = serverSocket.getLocalPort();
-			System.out.println("Initialized address:" + Arrays.toString(IP_address));
+			System.out.println("Initialized address in bytes:" + Arrays.toString(IP_address) + "\nAddress as InetAddress: " + InetAddress.getLocalHost());
 			System.out.println("On port: " + portNumber);
 		} catch (UnknownHostException e) {
 			System.out.println("\nUnknownHostException in constructor");

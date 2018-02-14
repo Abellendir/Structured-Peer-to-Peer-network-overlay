@@ -141,7 +141,7 @@ public class Registry implements Node {
 		System.out.println("Registering Node");
 		RegistryReportsRegistrationStatus send = null;
 		int ID = randomizedIDs.remove(0);
-		TCPConnection conn = tcpConnectionsCache.getConnection(request.getIP_address(),request.getPortNumber());
+		TCPConnection conn = tcpConnectionsCache.getConnection(request.getSocketAddress(),request.getSocketPort());
 		RoutingEntry entry = new RoutingEntry(ID,request.getIP_address(),request.getPortNumber(),conn);
 		if(registry.contains(entry)) {
 			send = new RegistryReportsRegistrationStatus(-1,"Already registered with registry");

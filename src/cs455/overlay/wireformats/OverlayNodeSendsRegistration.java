@@ -22,8 +22,10 @@ public class OverlayNodeSendsRegistration implements Event, Protocol {
 	private int type = OVERLAY_NODE_SENDS_REGISTRATION;
 	private int length;
 	private byte[] IP_address;
+	private byte[] socketAddress;
 	private int portNumber;
 	private int status = 0;
+	private int socketPort;
 	
 	/**
 	 * 
@@ -130,6 +132,23 @@ public class OverlayNodeSendsRegistration implements Event, Protocol {
 				"\nbyte: length of folling IP address field " + length +
 				"\nbyte[^^]: IP address; " + Arrays.toString(IP_address) +
 				"\nint: " + portNumber + "\n\n";
+	}
+
+	public void setSocketPort(int port) {
+		this.socketPort = port;
+		
+	}
+
+	public int getSocketPort() {
+		return socketPort;
+	}
+
+	public byte[] getSocketAddress() {
+		return socketAddress;
+	}
+
+	public void setSocketAddress(byte[] socketAddress) {
+		this.socketAddress = socketAddress;
 	}
 
 }

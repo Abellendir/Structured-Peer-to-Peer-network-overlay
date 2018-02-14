@@ -50,6 +50,8 @@ public class EventFactory implements Protocol {
 			Event event = getEvent(type,marshalledBytes);
 			if(event instanceof OverlayNodeSendsRegistration) {
 				OverlayNodeSendsRegistration nodeTemp = (OverlayNodeSendsRegistration) event;
+				nodeTemp.setSocketPort(port);
+				nodeTemp.setSocketAddress(IP);
 				if(!verifyAddress(nodeTemp.getIP_address(), IP)) {
 					nodeTemp.setStatus();
 				}

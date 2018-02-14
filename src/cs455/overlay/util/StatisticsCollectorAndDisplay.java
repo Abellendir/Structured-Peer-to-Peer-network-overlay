@@ -6,11 +6,11 @@ public class StatisticsCollectorAndDisplay {
 	
 	ArrayList<EntryStats> entryStats = new ArrayList<>();
 	
-	int sent;
-	int received;
-	int relayed;
-	long sumDataSent;
-	long sumDataReceived;
+	int sent = 0;
+	int received = 0;
+	int relayed = 0;
+	long sumDataSent = 0;
+	long sumDataReceived = 0;
 	
 	public StatisticsCollectorAndDisplay() {
 		// TODO Auto-generated constructor stub
@@ -23,6 +23,14 @@ public class StatisticsCollectorAndDisplay {
 		this.relayed+=relayed;
 		this.sumDataSent+=sumDataSent;
 		this.sumDataReceived+=sumDataReceived;
+	}
+	
+	public void clear() {
+		sent = 0;
+		received = 0;
+		relayed = 0;
+		sumDataSent = 0;
+		sumDataReceived = 0;
 	}
 	
 	@Override

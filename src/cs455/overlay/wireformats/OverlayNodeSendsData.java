@@ -40,8 +40,32 @@ public class OverlayNodeSendsData implements Event, Protocol {
 		this.destinationId = destinationId;
 		this.sourceId = sourceId;
 		this.payload = payload;
-		this.disseminationTraceLength = disseminationNodeIDtrace.length;
+		if(disseminationNodeIDtrace == null) {
+			disseminationTraceLength = 0;
+		}else {
+			this.disseminationTraceLength = disseminationNodeIDtrace.length;
+		}
 		this.disseminationNodeIDtrace = disseminationNodeIDtrace;
+	}
+
+	public int getDestinationId() {
+		return destinationId;
+	}
+
+	public int getSourceId() {
+		return sourceId;
+	}
+
+	public int getPayload() {
+		return payload;
+	}
+
+	public int getDisseminationTraceLength() {
+		return disseminationTraceLength;
+	}
+
+	public int[] getDisseminationNodeIDtrace() {
+		return disseminationNodeIDtrace;
 	}
 
 	/**
@@ -58,9 +82,13 @@ public class OverlayNodeSendsData implements Event, Protocol {
 		sourceId = din.readInt();
 		payload = din.readInt();
 		disseminationTraceLength = din.readInt();
-		disseminationNodeIDtrace = new int[disseminationTraceLength];
-		for(int i = 0; i < disseminationTraceLength; i++) {
-			disseminationNodeIDtrace[i] = din.readInt();
+		if(!(disseminationTraceLength == 0)) {
+			disseminationNodeIDtrace = new int[disseminationTraceLength];
+			for(int i = 0; i < disseminationTraceLength; i++) {
+				disseminationNodeIDtrace[i] = din.readInt();
+			}
+		}else {
+			disseminationNodeIDtrace = null;
 		}
 		baInputStream.close();
 		din.close();

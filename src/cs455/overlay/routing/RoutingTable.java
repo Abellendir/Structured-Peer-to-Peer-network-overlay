@@ -65,7 +65,7 @@ public class RoutingTable {
 		}
 	}
 	
-	public TCPConnection getConnectionOffID(int nodeID) {
+	public TCPConnection getConnection(int nodeID) {
 		for(RoutingEntry entry: routingTable) {
 			if(entry.getID()==nodeID) {
 				return entry.getConnection();

@@ -9,6 +9,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Arrays;
+import java.util.Random;
 
 import cs455.overlay.routing.RoutingEntry;
 import cs455.overlay.routing.RoutingTable;
@@ -19,6 +20,8 @@ import cs455.overlay.util.InteractiveCommandParser;
 import cs455.overlay.wireformats.Event;
 import cs455.overlay.wireformats.EventFactory;
 import cs455.overlay.wireformats.NodeReportsOverlaySetupStatus;
+import cs455.overlay.wireformats.OverlayNodeReportsTaskFinished;
+import cs455.overlay.wireformats.OverlayNodeReportsTrafficSummary;
 import cs455.overlay.wireformats.OverlayNodeSendsData;
 import cs455.overlay.wireformats.OverlayNodeSendsRegistration;
 import cs455.overlay.wireformats.RegistryReportsRegistrationStatus;
@@ -34,6 +37,7 @@ public class MessagingNode implements Node {
 	
 	private int nodeID;
 	private final RoutingTable routingTable = new RoutingTable();
+	private int[] nodesInRoutingTable;
 	private TCPConnectionsCache cache = TCPConnectionsCache.getInstance();
 	private int[] allNodes;
 	private byte[] IP_address;
@@ -84,35 +88,153 @@ public class MessagingNode implements Node {
 		
 	}
 	
-	private synchronized void overlayNodeSendsData(OverlayNodeSendsData event) {
-		
+	private void overlayNodeSendsData(OverlayNodeSendsData event) {
+		if(event.getDestinationId() == this.nodeID) {
+			overlayNodeReceivesPayload(event);
+		}else {
+			int destination = event.getDestinationId();
+			int payload = event.getPayload();
+            int source = event.getSourceId();
+			int[] dataTrace = event.getDisseminationNodeIDtrace();
+			int[] trace = null;
+			if(dataTrace == null) {
+				trace = new int[1];
+				trace[0] = this.nodeID;
+			}else {
+				trace = new int[dataTrace.length+1];
+				for(int i = 0; i < trace.length-1; i++) {
+					trace[i] = dataTrace[i];
+				}
+				trace[trace.length-1] = this.nodeID;
+			}
+			int index = getBestRouting(destination);
+			try {
+				relayPayload(trace, destination, this.nodeID, payload, index);
+				incrementRelayed();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private synchronized void incrementRelayed() {
+		relayedTracker++;
+	}
+
+	private void overlayNodeReceivesPayload(OverlayNodeSendsData event) {
+		System.out.println(event);
+		incrementReceivedTracker();
+		incrementReceivedSum(event.getPayload());
+	}
+
+	private synchronized void incrementReceivedSum(int payload) {
+		receiveSummation += payload;
+	}
+
+	private synchronized void incrementReceivedTracker() {
+		receiveTracker++;
 	}
 
 	private synchronized void registryRequestsTrafficSummary(RegistryRequestsTrafficSummary event) {
-		// TODO Auto-generated method stub
-		
+		OverlayNodeReportsTrafficSummary send = 
+				new OverlayNodeReportsTrafficSummary(this.nodeID,this.sendTracker,this.relayedTracker,this.sendSummation,this.receiveTracker,this.receiveSummation);
+		try {
+			cache.getRegistry().sendData(send.getByte());
+			resetCounts();
+		} catch (IOException e) {
+			System.out.println("Failed to send summary");
+			e.printStackTrace();
+		}
+	}
+
+	private void resetCounts() {
+		sendTracker = 0;
+		receiveTracker = 0;
+		relayedTracker = 0;
+		sendSummation = 0;
+		receiveSummation =0;
 	}
 
 	private void registryRequestsTaskInitiate(RegistryRequestsTaskInitiate event) {
-		
-		
+		System.out.println(event);
+		int rounds = event.getStatus();
+		Random rand = new Random();
+		int[] trace = null;
+		for(int i = 1; i <= rounds; i++ ) {
+			int destination;
+			do {
+				destination = allNodes[rand.nextInt(this.allNodes.length)];
+			}while(destination == this.nodeID);
+			int payload = rand.nextInt();
+			int index = getBestRouting(destination);
+			try {
+				relayPayload(trace, destination, this.nodeID, payload, index);
+				incrementSendSum(payload);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			sendTracker++;
+		}
+		overlayNodeReportsTaskFinished();
+	}
+
+	private void overlayNodeReportsTaskFinished() {
+		TCPConnection conn = cache.getRegistry();
+		OverlayNodeReportsTaskFinished send = new OverlayNodeReportsTaskFinished(IP_address.length,IP_address,portNumber,nodeID);
+		try {
+			conn.sendData(send.getByte());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * @param trace
+	 * @param destination
+	 * @param payload
+	 * @param index
+	 */
+	private void relayPayload(int[] trace, int destination, int source, int payload, int index) throws IOException{
+		TCPConnection conn = routingTable.get(index).getConnection();
+		OverlayNodeSendsData data = new OverlayNodeSendsData(destination,source,payload,trace);
+		conn.sendData(data.getByte());
+	}
+
+	private synchronized void incrementSendSum(int payload) {
+		sendSummation += payload;
+	}
+
+	private int getBestRouting(int destination) {
+		int length = nodesInRoutingTable.length;
+		if(nodesInRoutingTable[0] == destination) return 0;
+		if(nodesInRoutingTable[length-1] == destination) return length-1;
+		int index = length-1;
+		for(int i = 1; i < length-1; i++) {
+			if(nodesInRoutingTable[i] == destination) return i;
+			if(nodesInRoutingTable[i-1] < destination && destination < nodesInRoutingTable[i]) return (i-1);
+			if(nodesInRoutingTable[i-1] > destination && destination > nodesInRoutingTable[i]) return (i-1);
+			if(nodesInRoutingTable[i] < destination && destination < nodesInRoutingTable[i+1]) return (i);
+			if(nodesInRoutingTable[i] > destination && destination > nodesInRoutingTable[i+1]) return (i);
+		}
+		return index;
 	}
 
 	private void registrySendsNodeManifest(RegistrySendsNodeManifest event){
 		System.out.print(event);
 		int status = this.nodeID;
-		int[] nodeID = event.getNodeID();
+		nodesInRoutingTable = event.getNodeID();
 		byte[][] IP = event.getIP_addresses();
 		int[] ports = event.getPortNumbers();
 		allNodes = event.getAllNodes();
-		for(int i = 0; i < nodeID.length;i++) {
+		for(int i = 0; i < nodesInRoutingTable.length;i++) {
 			try {
 				InetAddress addr = InetAddress.getByAddress(IP[i]);
 				Socket socket = new Socket(addr,ports[i]);
 				TCPConnection conn = new TCPConnection(socket);
 				Thread connection = new Thread(conn);
 				connection.start();
-				RoutingEntry entry = new RoutingEntry(nodeID[i],IP[i],ports[i],conn);
+				RoutingEntry entry = new RoutingEntry(nodesInRoutingTable[i],IP[i],ports[i],conn);
 				routingTable.add(entry);
 			} catch (UnknownHostException e) {
 				status = -1;
@@ -146,9 +268,6 @@ public class MessagingNode implements Node {
 		System.out.println(event);
 	}
 
-	public void start() {
-		
-	}
 	/**
 	 * 
 	 */

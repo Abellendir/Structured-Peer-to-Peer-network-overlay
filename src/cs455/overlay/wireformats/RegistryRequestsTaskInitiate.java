@@ -69,7 +69,6 @@ public class RegistryRequestsTaskInitiate implements Event, Protocol {
 	 * 
 	 */
 	public int getType() {
-		// TODO Auto-generated method stub
 		return type;
 	}
 	
@@ -84,7 +83,6 @@ public class RegistryRequestsTaskInitiate implements Event, Protocol {
 
 	@Override
 	public int getStatus() {
-		// TODO Auto-generated method stub
 		return numPacketsToSend;
 	}
 

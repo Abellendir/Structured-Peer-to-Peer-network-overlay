@@ -41,6 +41,15 @@ public class Registry implements Node {
 	private final StatisticsCollectorAndDisplay statisticsCollector = new StatisticsCollectorAndDisplay();
 	private final ArrayList<Integer> randomizedIDs = new ArrayList<Integer>();
 	private ServerSocket serverSocket;
+	private int taskCompleteTracker;
+	
+	private synchronized int getTaskCompleteTracker() {
+		return taskCompleteTracker;
+	}
+
+	private synchronized void incrementTaskCompleteTracker() {
+		this.taskCompleteTracker++;
+	}
 	private final RoutingTable registry = new RoutingTable();
 	
 	/**
@@ -88,14 +97,27 @@ public class Registry implements Node {
 
 	private void overlayNodeReportsDone(OverlayNodeReportsTaskFinished event) {
 		System.out.println(event);
-		int nodeID = event.getStatus();
-		RegistryRequestsTrafficSummary send = new RegistryRequestsTrafficSummary();
-		TCPConnection conn = registry.getConnectionOffID(nodeID);
-		try {
-			conn.sendData(send.getByte());
-		} catch (IOException e) {
-			System.out.println("Failled to send request for traffic summary");
-			e.printStackTrace();
+		incrementTaskCompleteTracker();
+		if(registry.getSize() == this.getTaskCompleteTracker()) {
+			try {
+				Thread.sleep(15000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			registryRequestTrafficSummary();
+		}
+	}
+
+	private void registryRequestTrafficSummary() {
+		for(int i = 0; i < registry.getSize(); i++) {
+			RegistryRequestsTrafficSummary send = new RegistryRequestsTrafficSummary();
+			TCPConnection conn = registry.get(i).getConnection();
+			try {
+				conn.sendData(send.getByte());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -110,7 +132,7 @@ public class Registry implements Node {
 		if(request.getStatus() == -1) {
 			send.setMessage("Deregistration unsuccessful due to mismatch of IP actual and expected");
 			System.out.println(send);
-			registry.getConnectionOffID(nodeID).sendData(send.getByte());
+			registry.getConnection(nodeID).sendData(send.getByte());
 			return;
 		}
 		if(!registry.contains(nodeID)) {
@@ -120,7 +142,7 @@ public class Registry implements Node {
 			conn.sendData(send.getByte());
 			return;
 		}
-		TCPConnection conn = registry.getConnectionOffID(nodeID);
+		TCPConnection conn = registry.getConnection(nodeID);
 		registry.remove(nodeID);
 		randomizedIDs.add(nodeID);
 		System.out.println(send);

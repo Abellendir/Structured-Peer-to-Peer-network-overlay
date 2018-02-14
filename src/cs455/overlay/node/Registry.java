@@ -50,6 +50,10 @@ public class Registry implements Node {
 	private synchronized void incrementTaskCompleteTracker() {
 		this.taskCompleteTracker++;
 	}
+	
+	private synchronized void resetCounter() {
+		this.taskCompleteTracker = 0;
+	}
 	private final RoutingTable registry = new RoutingTable();
 	
 	/**
@@ -93,6 +97,11 @@ public class Registry implements Node {
 		long sumDataSent = event.getSumSentData();
 		long sumDataReceived = event.getSumPacketsRec();
 		statisticsCollector.addData(nodeID,sent,received,relayed,sumDataSent,sumDataReceived);
+		if(getTaskCompleteTracker() == registry.getSize()) {
+			System.out.println(statisticsCollector);
+			statisticsCollector.clear();
+		}
+		
 	}
 
 	private void overlayNodeReportsDone(OverlayNodeReportsTaskFinished event) {
@@ -101,11 +110,12 @@ public class Registry implements Node {
 		if(registry.getSize() == this.getTaskCompleteTracker()) {
 			try {
 				Thread.sleep(15000);
+				registryRequestTrafficSummary();
+				resetCounter();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			registryRequestTrafficSummary();
 		}
 	}
 

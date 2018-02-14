@@ -23,6 +23,7 @@ import cs455.overlay.wireformats.NodeReportsOverlaySetupStatus;
 import cs455.overlay.wireformats.OverlayNodeReportsTaskFinished;
 import cs455.overlay.wireformats.OverlayNodeReportsTrafficSummary;
 import cs455.overlay.wireformats.OverlayNodeSendsData;
+import cs455.overlay.wireformats.OverlayNodeSendsDeregistration;
 import cs455.overlay.wireformats.OverlayNodeSendsRegistration;
 import cs455.overlay.wireformats.RegistryReportsRegistrationStatus;
 import cs455.overlay.wireformats.RegistryRequestsTaskInitiate;
@@ -259,7 +260,7 @@ public class MessagingNode implements Node {
 	}
 
 	private void registryReportsDeregistrationStatus(RegistryReportsRegistrationStatus event) {
-		// TODO Auto-generated method stub
+		System.out.println(event);
 		
 	}
 
@@ -287,7 +288,13 @@ public class MessagingNode implements Node {
 	 * 
 	 */
 	private void exitOverlay() {
-		
+		OverlayNodeSendsDeregistration send = new OverlayNodeSendsDeregistration(IP_address,portNumber,nodeID);
+		try {
+			cache.getRegistry().sendData(send.getByte());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**

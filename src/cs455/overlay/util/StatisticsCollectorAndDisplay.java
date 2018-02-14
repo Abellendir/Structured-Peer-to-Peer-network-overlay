@@ -25,16 +25,17 @@ public class StatisticsCollectorAndDisplay {
 		this.sumDataReceived+=sumDataReceived;
 	}
 	
-	public void clear() {
+	public synchronized void clear() {
 		sent = 0;
 		received = 0;
 		relayed = 0;
 		sumDataSent = 0;
 		sumDataReceived = 0;
+		entryStats = new ArrayList<>();
 	}
 	
 	@Override
-	public String toString() {
+	public synchronized String toString() {
 		String string = "";
 		string += "\n\tPackets Sent|Packets Received|Packets Relayed|Sum Values Sent|Sum Values Received";
 		for(int i = 0; i < entryStats.size(); i++) {

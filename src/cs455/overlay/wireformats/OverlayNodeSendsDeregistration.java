@@ -31,6 +31,7 @@ public class OverlayNodeSendsDeregistration implements Event , Protocol {
 	 */
 	public OverlayNodeSendsDeregistration(byte[] IP_address, int portNumber, int nodeID) {
 		this.length = IP_address.length;
+		this.IP_address = IP_address;
 		this.portNumber = portNumber;
 		this.nodeID = nodeID;
 	}

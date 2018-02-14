@@ -97,6 +97,7 @@ public class Registry implements Node {
 		long sumDataSent = event.getSumSentData();
 		long sumDataReceived = event.getSumPacketsRec();
 		statisticsCollector.addData(nodeID,sent,received,relayed,sumDataSent,sumDataReceived);
+		incrementTaskCompleteTracker();
 		if(getTaskCompleteTracker() == registry.getSize()) {
 			System.out.println(statisticsCollector);
 			statisticsCollector.clear();

@@ -58,7 +58,6 @@ public class OverlayNodeSendsRegistration implements Event, Protocol {
 	 * @param portNumber
 	 */
 	public OverlayNodeSendsRegistration(int length, byte[] IP_address, int portNumber) {
-		System.out.println("Entering OverlayNodeSendsRegistration");
 		this.length = length;
 		this.IP_address = IP_address;
 		this.portNumber = portNumber;
@@ -128,10 +127,10 @@ public class OverlayNodeSendsRegistration implements Event, Protocol {
 	 * 
 	 */
 	public String toString() {
-		return "\n\nbyte: Message Type (" + type + ")" +
+		return "\nbyte: Message Type (" + type + ")" +
 				"\nbyte: length of folling IP address field " + length +
 				"\nbyte[^^]: IP address; " + Arrays.toString(IP_address) +
-				"\nint: " + portNumber + "\n\n";
+				"\nint: " + portNumber + "\n";
 	}
 
 	public void setSocketPort(int port) {

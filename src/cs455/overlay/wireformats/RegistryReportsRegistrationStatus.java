@@ -88,10 +88,10 @@ public class RegistryReportsRegistrationStatus implements Event , Protocol{
 	 * 
 	 */
 	public String toString() {
-		return "\n\nbyte: Message Type (" + type + ")" +
+		return "\nbyte: Message Type (" + type + ")" +
 				"\nint: Success status; " + ID +
 				"\nByte: " + length +
-				"\nbyte[^^]: " + message + "\n\n";
+				"\nbyte[^^]: " + message + "\n";
 	}
 
 	@Override

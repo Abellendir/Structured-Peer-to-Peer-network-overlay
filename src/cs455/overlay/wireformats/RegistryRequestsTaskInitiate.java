@@ -77,8 +77,8 @@ public class RegistryRequestsTaskInitiate implements Event, Protocol {
 	 * 
 	 */
 	public String toString() {
-		return "\n\nbyte: Message type; " + type +
-				"\nint: " + numPacketsToSend + "\n\n";
+		return "\nbyte: Message type; " + type +
+				"\nint: " + numPacketsToSend + "\n";
 	}
 
 	@Override

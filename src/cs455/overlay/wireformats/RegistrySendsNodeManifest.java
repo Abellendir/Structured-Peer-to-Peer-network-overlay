@@ -46,6 +46,11 @@ public class RegistrySendsNodeManifest implements Event, Protocol {
 			System.out.println(portNumbers[i]);
 		}
 	}
+	
+	/**
+	 * getters for instance variables for the wireframe
+	 * @return
+	 */
 	public int[] getNodeID() {
 		return nodeID;
 	}
@@ -115,20 +120,7 @@ public class RegistrySendsNodeManifest implements Event, Protocol {
 		byte[] marshalledBytes = null;
 		ByteArrayOutputStream baOutputStream = new ByteArrayOutputStream();
 		DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(baOutputStream));
-		/*
-		dout.writeByte(type);
-		dout.writeByte(nodeID.length);
-		for(byte i = 0; i < nodeID.length; i++) {
-			dout.writeInt(nodeID[i]);
-			int length = IP_addresses[i].length;
-			dout.write(IP_addresses[i],0,length);
-			dout.writeInt(portNumbers[i]);
-		}
-		int numberNodesInSystem = allNodes.length; 
-		for(byte i = 0; i < numberNodesInSystem; i++) {
-			dout.writeInt(allNodes[i]);
-		}
-		*/
+		
 		dout.writeByte(type);
 		dout.writeByte(numberEntries);
 		for(int i = 0; i < numberEntries; i++) {
@@ -168,7 +160,7 @@ public class RegistrySendsNodeManifest implements Event, Protocol {
 	 */
 	public String toString() {
 		String string = "";
-		string += "\n\nbyte: Message type; " + this.type +
+		string += "\nbyte: Message type; " + this.type +
 				  "\nbyte: routing table size " + this.nodeID.length;
 		for(int i = 0; i < this.nodeID.length; i++) {
 			string += "\nint: Node Id of node " +(i+1)+ " hop away: " + nodeID[i] +
@@ -177,13 +169,12 @@ public class RegistrySendsNodeManifest implements Event, Protocol {
 					  "\nint: " + this.portNumbers[i] ;
 		}
 		string += "\nbyte: " + this.allNodes.length + 
-				"\nint[^^]: " + Arrays.toString(this.allNodes) + "\n\n";
+				"\nint[^^]: " + Arrays.toString(this.allNodes) + "\n";
 		return string;
 	}
 
 	@Override
 	public int getStatus() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 }

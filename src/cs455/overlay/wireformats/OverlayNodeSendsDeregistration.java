@@ -50,7 +50,7 @@ public class OverlayNodeSendsDeregistration implements Event , Protocol {
 		din.readFully(IP_address,0,length);
 		portNumber = din.readInt();
 		nodeID = din.readInt();
-		
+		status = nodeID;
 		baInputStream.close();
 		din.close();
 	}
@@ -92,11 +92,11 @@ public class OverlayNodeSendsDeregistration implements Event , Protocol {
 	 * 
 	 */
 	public String toString() {
-		return "\n\nbyte: Message type; " + this.type +
+		return "\nbyte: Message type; " + this.type +
 				"\nbyte: " + this.length +
 				"\nbyte[^^]: " + Arrays.toString(this.IP_address) +
 				"\nint: " + this.portNumber +
-				"\nint: " + this.nodeID + "\n\n";
+				"\nint: " + this.nodeID + "\n";
 	}
 
 	@Override

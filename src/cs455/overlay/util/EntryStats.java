@@ -21,7 +21,7 @@ public class EntryStats {
 	@Override
 	public String toString() {
 		String string = "";
-		string += "nodeID " + nodeID + "|" + sent 
+		string +=  nodeID + "|" + sent 
 				+ "|" + received + "|" + relayed + "|" 
 				+ sumDataSent + "|" + sumDataReceived;
 		return string;

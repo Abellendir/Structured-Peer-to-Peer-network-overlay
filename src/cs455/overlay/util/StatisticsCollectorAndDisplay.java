@@ -37,7 +37,7 @@ public class StatisticsCollectorAndDisplay {
 	@Override
 	public synchronized String toString() {
 		String string = "";
-		string += "\n\tPackets Sent|Packets Received|Packets Relayed|Sum Values Sent|Sum Values Received";
+		string += "\nNode ID|Packets Sent|Packets Received|Packets Relayed|Sum Values Sent|Sum Values Received";
 		for(int i = 0; i < entryStats.size(); i++) {
 			string += "\nNode " + entryStats.get(i);
 		}

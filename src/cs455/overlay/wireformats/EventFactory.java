@@ -7,9 +7,15 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 import cs455.overlay.node.Node;
+import cs455.overlay.transport.IncomingMessage;
 
 /**
  * 
@@ -17,15 +23,21 @@ import cs455.overlay.node.Node;
  * @author Chemical
  *
  */
-public class EventFactory implements Protocol {
+public class EventFactory implements Protocol,Runnable {
 
 	private static final EventFactory eventFactory = new EventFactory();
+	private volatile boolean TERMINATE = false;
 	private Node node;
+	private final BlockingQueue<IncomingMessage> buffer = new ArrayBlockingQueue<IncomingMessage>(1000);
 
 	/**
 	 * 
 	 */
 	private EventFactory() {
+	}
+
+	private synchronized void setTermination() {
+		TERMINATE = true;
 	}
 
 	/**
@@ -36,6 +48,14 @@ public class EventFactory implements Protocol {
 		return eventFactory;
 	}
 	
+	public void addMessage(IncomingMessage message) {
+		try {
+			buffer.put(message);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	/**
 	 * 
 	 * @param marshalledBytes
@@ -91,5 +111,17 @@ public class EventFactory implements Protocol {
 	
 	private boolean verifyAddress(byte[] actual, byte[] expected) {
 		return Arrays.equals(actual, expected);
+	}
+
+	@Override
+	public void run() {
+		while(!TERMINATE) {
+			try {
+				IncomingMessage message = buffer.take();
+				handleBytes(message.getMarshalledBytes(),message.getIP_expected(),message.getConnectionPortNumber());
+			} catch (InterruptedException | IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

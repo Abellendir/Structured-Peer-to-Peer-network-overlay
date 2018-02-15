@@ -81,10 +81,10 @@ public class NodeReportsOverlaySetupStatus implements Event, Protocol {
 	
 	@Override
 	public String toString() {
-		return "\n\nbyte: Message Type (" + this.type + ")" +
+		return "\nbyte: Message Type (" + this.type + ")" +
 				"\nint: Success status; " + this.status +
 				"\nbyte: " +  this.informationString.length() +
-				"\nbyte[^^]: " + this.informationString + "\n\n";
+				"\nbyte[^^]: " + this.informationString + "\n";
 	}
 
 	@Override

@@ -93,10 +93,10 @@ public  class RegistryReportsDeregistrationStatus implements Event, Protocol{
 	 * 
 	 */
 	public String toString() {
-		return "\n\nbyte: Message type" + this.type +
+		return "\nbyte: Message type" + this.type +
 				"\nint: " + this.getStatus() +
 				"\nbyte: " + this.length +
-				"\nbyte[^^}" + message + "\n\n";
+				"\nbyte[^^}" + message + "\n";
 	}
 
 	@Override

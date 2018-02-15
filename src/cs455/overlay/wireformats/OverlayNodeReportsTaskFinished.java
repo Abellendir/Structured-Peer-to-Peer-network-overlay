@@ -95,11 +95,11 @@ public class OverlayNodeReportsTaskFinished implements Event, Protocol {
 	 * 
 	 */
 	public String toString() {
-		return "\n\nbyte: Message type; " + this.type 
+		return "\nbyte: Message type; " + this.type 
 				+ "\nbyte: " + this.length 
 				+ "\nbyte[^^]: " + Arrays.toString(this.IP_address) 
 				+ "\nint: " + this.portNumber
-				+ "\nint: " + this.nodeID + "\n\n";
+				+ "\nint: " + this.nodeID + "\n";
 	}
 
 	@Override

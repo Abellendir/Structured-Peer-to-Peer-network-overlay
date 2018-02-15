@@ -76,7 +76,7 @@ public class RegistryRequestsTrafficSummary implements Event, Protocol {
 	 * 
 	 */
 	public String toString() {
-		return "\n\nbyte: " + this.type + "\n\n";
+		return "\nbyte: " + this.type + "\n";
 	}
 
 	@Override

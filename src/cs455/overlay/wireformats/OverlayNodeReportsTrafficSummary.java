@@ -129,13 +129,13 @@ public class OverlayNodeReportsTrafficSummary implements Event, Protocol {
 	 *
 	 */
 	public String toString() {
-		return "\n\nbyte: Message Type; " + this.type +
+		return "\nbyte: Message Type; " + this.type +
 				"\nint: " + this.assignedNodeId + 
 				"\nint: " + this.totalSent +
 				"\nint: " + this.totalRelayed +
 				"\nlong: " + this.sumSentData +
 				"\nint: " + this.totalNumPacketsRec +
-				"\nlong: " + this.sumPacketsRec + "\n\n";
+				"\nlong: " + this.sumPacketsRec + "\n";
 	}
 
 	@Override

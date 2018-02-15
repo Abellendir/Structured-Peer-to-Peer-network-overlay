@@ -1,7 +1,9 @@
 package cs455.overlay.node;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,12 +38,11 @@ import cs455.overlay.wireformats.RegistrySendsNodeManifest;
 public class Registry implements Node {
 	
 	private boolean debug = true;
-	private Thread serverThread = null;
 	private final TCPConnectionsCache tcpConnectionsCache = TCPConnectionsCache.getInstance();
 	private final StatisticsCollectorAndDisplay statisticsCollector = new StatisticsCollectorAndDisplay();
 	private final ArrayList<Integer> randomizedIDs = new ArrayList<Integer>();
-	private ServerSocket serverSocket;
 	private int taskCompleteTracker;
+	private final RoutingTable registry = new RoutingTable();
 	
 	private synchronized int getTaskCompleteTracker() {
 		return taskCompleteTracker;
@@ -54,16 +55,23 @@ public class Registry implements Node {
 	private synchronized void resetCounter() {
 		this.taskCompleteTracker = 0;
 	}
-	private final RoutingTable registry = new RoutingTable();
 	
 	/**
 	 * @throws IOException 
 	 * 
 	 */
-	public Registry(int registryPortNumber) {
+	public Registry() {
+		try {
+			System.out.println(Arrays.toString(InetAddress.getLocalHost().getAddress()));
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
 		intitializeRandomArrayListOfIDs();
 	}
 	
+	/**
+	 * 
+	 */
 	private void intitializeRandomArrayListOfIDs() {
 		for(int randID = 0; randID < 128; randID++) {
 			randomizedIDs.add(randID);
@@ -88,8 +96,12 @@ public class Registry implements Node {
 		}
 	}
 
+	/**
+	 * 
+	 * @param event
+	 */
 	private void overlayNodeReportsSummary(OverlayNodeReportsTrafficSummary event) {
-		System.out.println(event);
+		//System.out.println(event);
 		int nodeID = event.getStatus();
 		int sent = event.getTotalSent();
 		int received = event.getTotalNumPacketsRec();
@@ -100,14 +112,16 @@ public class Registry implements Node {
 		incrementTaskCompleteTracker();
 		if(getTaskCompleteTracker() == registry.getSize()) {
 			System.out.println(statisticsCollector);
+			resetCounter();
 			statisticsCollector.clear();
 		}
 		
 	}
 
-	private void overlayNodeReportsDone(OverlayNodeReportsTaskFinished event) {
-		System.out.println(event);
+	private synchronized void overlayNodeReportsDone(OverlayNodeReportsTaskFinished event) {
+		//System.out.println(event);
 		incrementTaskCompleteTracker();
+		System.out.println(registry.getSize());
 		if(registry.getSize() == this.getTaskCompleteTracker()) {
 			try {
 				Thread.sleep(15000);
@@ -170,8 +184,8 @@ public class Registry implements Node {
 	 * @param request
 	 */
 	public void registerNewNode(OverlayNodeSendsRegistration request) {
-		System.out.println(request);
 		System.out.println("Registering Node");
+		System.out.println(request);
 		RegistryReportsRegistrationStatus send = null;
 		int ID = randomizedIDs.remove(0);
 		TCPConnection conn = tcpConnectionsCache.getConnection(request.getSocketAddress(),request.getSocketPort());
@@ -241,6 +255,7 @@ public class Registry implements Node {
 		}
 		return entryRoutingTable;
 	}
+	
 	/**
 	 * 
 	 */
@@ -262,32 +277,10 @@ public class Registry implements Node {
 		}
 	}
 
-    /**
-     *
-     * @param PortNumber
-     * @return 
-     * @throws IOException
-     */
-	public void startServerThread(int portNumber) throws IOException {
-		ServerSocket serverSocket = new ServerSocket(portNumber);
-		TCPServerThread tcpServerThread = new TCPServerThread(serverSocket);
-		serverThread = new Thread(tcpServerThread);
-		serverThread.start();
-		tcpConnectionsCache.addServerConnection(tcpServerThread);
-	}
-	
 	/**
-	 * 
+	 *Provides the link from interactiveCommandParser to initiate the requested task on the node
+	 *@param command 
 	 */
-	public void closeServerSocket() {
-		try {
-			serverSocket.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
 	@Override
 	public void interactiveCommandEvent(String command) {
 		switch(command) {
@@ -329,9 +322,18 @@ public class Registry implements Node {
 	 */
 	public static void main(String [] args) {
 		System.out.println("Starting Registry");
-		Registry registry = new Registry(Integer.parseInt(args[0]));
+		EventFactory eventFactory = EventFactory.getInstance();
+		TCPConnectionsCache cache = TCPConnectionsCache.getInstance();
 		try {
-			registry.startServerThread(Integer.parseInt(args[0]));
+			ServerSocket serverSocket = new ServerSocket(Integer.parseInt(args[0]));
+			TCPServerThread serverThread = new TCPServerThread(serverSocket);
+			new Thread(serverThread).start();
+			cache.addServerConnection(serverThread);
+			Registry registry = new Registry();
+			eventFactory.giveNode(registry);
+			new Thread(eventFactory).start();
+			InteractiveCommandParser commandParser = new InteractiveCommandParser(registry);
+			new Thread(commandParser).start();
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -339,10 +341,6 @@ public class Registry implements Node {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		EventFactory eventFactory = EventFactory.getInstance();
-		eventFactory.giveNode(registry);
-		InteractiveCommandParser commandParser = new InteractiveCommandParser(registry);
-		Thread interactiveCommandParser = new Thread(commandParser);
-		interactiveCommandParser.start();
+
 	}
 }

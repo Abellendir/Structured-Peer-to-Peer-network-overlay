@@ -25,6 +25,8 @@ public class OverlayNodeSendsDeregistration implements Event , Protocol {
 	private int portNumber;
 	private int nodeID;
 	private int status;
+	private int socketPort;
+	private byte[] IP_socketAddress;
 
 	/**
 	 * 
@@ -122,5 +124,17 @@ public class OverlayNodeSendsDeregistration implements Event , Protocol {
 	
 	public void setStatus() {
 		this.status = -1;
+	}
+
+	public int getSocketPort() {
+		return socketPort;
+	}
+
+	public void setSocketPort(int socketPort) {
+		this.socketPort = socketPort;
+	}
+
+	public void setSocketAddress(byte[] iP) {
+		this.IP_socketAddress = iP;
 	}
 }

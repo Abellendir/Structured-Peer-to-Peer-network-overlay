@@ -25,6 +25,7 @@ import cs455.overlay.wireformats.OverlayNodeReportsTrafficSummary;
 import cs455.overlay.wireformats.OverlayNodeSendsData;
 import cs455.overlay.wireformats.OverlayNodeSendsDeregistration;
 import cs455.overlay.wireformats.OverlayNodeSendsRegistration;
+import cs455.overlay.wireformats.RegistryReportsDeregistrationStatus;
 import cs455.overlay.wireformats.RegistryReportsRegistrationStatus;
 import cs455.overlay.wireformats.RegistryRequestsTaskInitiate;
 import cs455.overlay.wireformats.RegistryRequestsTrafficSummary;
@@ -68,7 +69,7 @@ public class MessagingNode implements Node {
 			registryReportsRegistrationStatus((RegistryReportsRegistrationStatus) event);
 			break;
 		case 5:
-			registryReportsDeregistrationStatus((RegistryReportsRegistrationStatus) event);
+			registryReportsDeregistrationStatus((RegistryReportsDeregistrationStatus) event);
 			break;
 		case 6:
 			registrySendsNodeManifest((RegistrySendsNodeManifest) event);
@@ -268,7 +269,7 @@ public class MessagingNode implements Node {
 		}
 	}
 
-	private void registryReportsDeregistrationStatus(RegistryReportsRegistrationStatus event) {
+	private void registryReportsDeregistrationStatus(RegistryReportsDeregistrationStatus event) {
 		System.out.println(event);
 
 	}

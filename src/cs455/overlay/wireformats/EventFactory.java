@@ -79,6 +79,8 @@ public class EventFactory implements Protocol,Runnable {
 			}
 			if(event instanceof OverlayNodeSendsDeregistration) {
 				OverlayNodeSendsDeregistration node = (OverlayNodeSendsDeregistration) event;
+				node.setSocketPort(port);
+				node.setSocketAddress(IP);
 				if(!verifyAddress(node.getIP_address(),IP)) {
 					node.setStatus();
 				}

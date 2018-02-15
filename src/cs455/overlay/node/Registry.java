@@ -163,9 +163,12 @@ public class Registry implements Node {
 		if(!registry.contains(nodeID)) {
 			send.setMessage("Deregistration unsuccessful; node is not contained in registry.");
 			System.out.println(send);
-			TCPConnection conn = tcpConnectionsCache.getConnection(request.getIP_address(),request.getPortNumber());
+			System.out.println(Arrays.toString(request.getIP_address()) + " " + request.getSocketPort());
+			TCPConnection conn = tcpConnectionsCache.getConnection(request.getIP_address(),request.getSocketPort());
 			conn.sendData(send.getByte());
 			return;
+		}else {
+
 		}
 		TCPConnection conn = registry.getConnection(nodeID);
 		registry.remove(nodeID);

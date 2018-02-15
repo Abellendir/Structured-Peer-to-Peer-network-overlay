@@ -1,8 +1,4 @@
 All commands that are prescribed by the assignment are implemented and function for the interactiveCommandParser's perspective.
-*However Currently Deregistering a node fails and will throw a Concurrent access exception, 
-i have not been able to identify what is causing the exception. 
-Originally when I wrote the method calls to handle it, it worked. but since implementing/finishing the rest of the assignment
-I introduced an exception*
 
 Currently there is certainly an implementation failure in this assignment and concurrentencie issue when starting the task or initiating 
 task. This Code will initiate a task just find with a overlay size of 4 and 50000 messages. However if you attempt to do an overlay of 4 or 3 with say 100,000

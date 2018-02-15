@@ -19,7 +19,11 @@ public class RoutingEntry implements Comparable<RoutingEntry>{
 		this.portNumber = portNumber;
 		this.conn = tcpConnection;
 	}
-
+	
+	public void removeTable() {
+		table = null;
+	}
+	
 	public int getID() {
 		return ID;
 	}

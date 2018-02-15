@@ -58,11 +58,15 @@ public class RoutingTable {
 	}
 	
 	public void remove(int nodeId) {
+		for(int i = 0; i < getSize(); i++) {
+			if(routingTable.get(i).getID()==nodeId)
+				routingTable.remove(i);
+		}/*
 		for(RoutingEntry entry: routingTable) {
 			if(entry.getID()==nodeId) {
 				routingTable.remove(entry);
 			}
-		}
+		}*/
 	}
 	
 	public TCPConnection getConnection(int nodeID) {

@@ -2,12 +2,21 @@ package cs455.overlay.transport;
 
 import java.util.Arrays;
 
+/**
+ * @author adam_
+ *
+ */
 public class IncomingMessage {
 	
 	private final byte[] marshalledBytes;
 	private final byte[] IP_expected;
 	private final int connectionPortNumber;
 	
+	/**
+	 * @param marshalledBytes
+	 * @param IP_expected
+	 * @param connectionPortNumber
+	 */
 	public IncomingMessage(byte[] marshalledBytes, byte[] IP_expected, int connectionPortNumber) {
 		this.marshalledBytes = marshalledBytes;
 		this.IP_expected = IP_expected;
@@ -35,6 +44,9 @@ public class IncomingMessage {
 		return connectionPortNumber;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		String string = "bytes: " + Arrays.toString(marshalledBytes)

@@ -18,12 +18,9 @@ import java.util.Arrays;
  *
  */
 public class OverlayNodeSendsData implements Event, Protocol {
-	
+
 	private int type = OVERLAY_NODE_SENDS_DATA;
-	private int destinationId;
-	private int sourceId;
-	private int payload;
-	private int disseminationTraceLength;
+	private int destinationId, sourceId, payload, disseminationTraceLength;
 	private int[] disseminationNodeIDtrace;
 
 	/**
@@ -35,119 +32,139 @@ public class OverlayNodeSendsData implements Event, Protocol {
 	 * @param disseminationTraceLength
 	 * @param disseminationNodeIDtrace
 	 */
-	public OverlayNodeSendsData(int destinationId, int sourceId, 
-			int payload,int[] disseminationNodeIDtrace ) {
+	public OverlayNodeSendsData(int destinationId, int sourceId, int payload, int[] disseminationNodeIDtrace) {
 		this.destinationId = destinationId;
 		this.sourceId = sourceId;
 		this.payload = payload;
-		if(disseminationNodeIDtrace == null) {
+		if (disseminationNodeIDtrace == null) {
 			disseminationTraceLength = 0;
-		}else {
+		} else {
 			this.disseminationTraceLength = disseminationNodeIDtrace.length;
 		}
 		this.disseminationNodeIDtrace = disseminationNodeIDtrace;
 	}
 
+	/**
+	 * @return
+	 */
 	public int getDestinationId() {
 		return destinationId;
 	}
 
+	/**
+	 * @return
+	 */
 	public int getSourceId() {
 		return sourceId;
 	}
 
+	/**
+	 * @return
+	 */
 	public int getPayload() {
 		return payload;
 	}
 
+	/**
+	 * @return
+	 */
 	public int getDisseminationTraceLength() {
 		return disseminationTraceLength;
 	}
 
+	/**
+	 * @return
+	 */
 	public int[] getDisseminationNodeIDtrace() {
 		return disseminationNodeIDtrace;
 	}
 
 	/**
 	 * constructor to unmarshall the bytes
+	 * 
 	 * @param data
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public OverlayNodeSendsData(byte[] data) throws IOException {
 		ByteArrayInputStream baInputStream = new ByteArrayInputStream(data);
 		DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
-		
+
 		type = din.readByte();
 		destinationId = din.readInt();
 		sourceId = din.readInt();
 		payload = din.readInt();
 		disseminationTraceLength = din.readInt();
-		if(!(disseminationTraceLength == 0)) {
+		if (!(disseminationTraceLength == 0)) {
 			disseminationNodeIDtrace = new int[disseminationTraceLength];
-			for(int i = 0; i < disseminationTraceLength; i++) {
+			for (int i = 0; i < disseminationTraceLength; i++) {
 				disseminationNodeIDtrace[i] = din.readInt();
 			}
-		}else {
+		} else {
 			disseminationNodeIDtrace = null;
 		}
 		baInputStream.close();
 		din.close();
-		
+
 	}
-	
-	@Override
-	/**
+
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see cs455.overlay.wireformats.Event#getByte()
 	 */
-	public byte[] getByte() throws IOException{
-		// TODO Auto-generated method stub
+	@Override
+	public byte[] getByte() throws IOException {
 		byte[] marshalledBytes = null;
 		ByteArrayOutputStream baOutputStream = new ByteArrayOutputStream();
 		DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(baOutputStream));
-		
+
 		dout.writeByte(type);
 		dout.writeInt(destinationId);
 		dout.writeInt(sourceId);
 		dout.writeInt(payload);
 		dout.writeInt(disseminationTraceLength);
-		for(int i = 0; i < disseminationTraceLength; i++) {
+		for (int i = 0; i < disseminationTraceLength; i++) {
 			dout.writeInt(disseminationNodeIDtrace[i]);
 		}
 		dout.flush();
-		
+
 		marshalledBytes = baOutputStream.toByteArray();
-		
+
 		baOutputStream.close();
 		dout.close();
-		
+
 		return marshalledBytes;
 	}
 
-	@Override
-	/**
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see cs455.overlay.wireformats.Event#getType()
 	 */
+	@Override
 	public int getType() {
 		return type;
 	}
 
-	@Override
-	/**
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
-		return "\nbyte: Message Type; " + type + 
-				"\nint: " + destinationId + 
-				"\nint: " + sourceId +
-				"\nint: " + payload +
-				"\nint: " + disseminationTraceLength +
-				"\nint[^^]: " + Arrays.toString(disseminationNodeIDtrace) +
-				"\n";
+		return "\nbyte: Message Type; (OVERLAY_NODE_SENDS_DATA)\nint: " + destinationId + "\nint: " + sourceId
+				+ "\nint: " + payload + "\nint: " + disseminationTraceLength + "\nint[^^]: "
+				+ Arrays.toString(disseminationNodeIDtrace) + "\n";
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see cs455.overlay.wireformats.Event#getStatus()
+	 */
 	@Override
 	public int getStatus() {
-		// TODO Auto-generated method stub
 		return destinationId;
 	}
 }

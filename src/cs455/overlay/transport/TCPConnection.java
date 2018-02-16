@@ -24,7 +24,6 @@ public class TCPConnection implements Runnable {
 	private final DataOutputStream dout;
 	private final DataInputStream din;
 	private final EventFactory eventFactory = EventFactory.getInstance();
-	private final TCPConnectionsCache cache = TCPConnectionsCache.getInstance();
 	private final BlockingQueue<byte[]> buffer = new ArrayBlockingQueue<byte[]>(1000);
 	private final byte[] addr;
 	private final int port;
@@ -74,51 +73,44 @@ public class TCPConnection implements Runnable {
 	 */
 	public void run() {
 		new Thread(receiver).start();
-		new Thread(sender).start();/*
-		int dataLength;
-		while (socket != null) {
-			try {
-				dataLength = din.readInt();
-				byte[] data = new byte[dataLength];
-				din.readFully(data, 0, dataLength);
-				eventFactory.addMessage(new IncomingMessage(data, addr, port));
-			} catch (SocketException se) {
-				System.out.println(se.getMessage());
-				break;
-			} catch (IOException ioe) {
-				System.out.println(ioe.getMessage());
-				break;
-			}
-		}
-		cache.remove(this);*/
-
+		new Thread(sender).start();
 	}
 
+	/**
+	 * @param dataToSend
+	 * @throws IOException
+	 */
 	public void sendData(byte[] dataToSend) throws IOException {
-		// System.out.println("SENDING");
 		try {
 			buffer.put(dataToSend);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}/*
-		int dataLength = dataToSend.length;
-		dout.writeInt(dataLength);
-		dout.write(dataToSend, 0, dataLength);
-		dout.flush();*/
-
+		}
 	}
 
+	/**
+	 * @return
+	 */
 	public int getPortNumber() {
 		return port;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString() {
 		return "\nIP: " + Arrays.toString(addr) + "\nPort: " + port;
 	}
 
+	/**
+	 * @author adam_
+	 *
+	 */
 	class TCPReceiver implements Runnable {
 		
+		/* (non-Javadoc)
+		 * @see java.lang.Runnable#run()
+		 */
 		@Override
 		public void run() {
 			while (socket != null) {
@@ -140,8 +132,15 @@ public class TCPConnection implements Runnable {
 
 	}
 
+	/**
+	 * @author adam_
+	 *
+	 */
 	class TCPSender implements Runnable {
 
+		/* (non-Javadoc)
+		 * @see java.lang.Runnable#run()
+		 */
 		@Override
 		public void run() {
 			while (socket != null) {
@@ -152,10 +151,8 @@ public class TCPConnection implements Runnable {
 					dout.write(dataToSend, 0, dataLength);
 					dout.flush();
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 

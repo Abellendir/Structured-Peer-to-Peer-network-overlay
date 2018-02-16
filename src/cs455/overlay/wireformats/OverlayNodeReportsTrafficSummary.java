@@ -16,36 +16,69 @@ import java.io.IOException;
  * @author Adam Bellendir
  *
  */
+/**
+ * @author adam_
+ *
+ */
 public class OverlayNodeReportsTrafficSummary implements Event, Protocol {
-	
+
 	private int type = OVERLAY_NODE_REPORTS_TRAFFIC_SUMMARY;
-	private int assignedNodeId;
-	private int totalSent;
-	private int totalRelayed;
-	private long sumSentData;
-	private int totalNumPacketsRec;
-	private long sumPacketsRec;
-	
+	private int assignedNodeId, totalSent, totalRelayed, totalNumPacketsRec;
+	private long sumSentData, sumPacketsRec;
 
-
+	/**
+	 * @return
+	 */
 	public int getTotalSent() {
 		return totalSent;
 	}
 
+	/**
+	 * @return
+	 */
 	public int getTotalRelayed() {
 		return totalRelayed;
 	}
 
+	/**
+	 * @return
+	 */
 	public long getSumSentData() {
 		return sumSentData;
 	}
 
+	/**
+	 * @return
+	 */
 	public int getTotalNumPacketsRec() {
 		return totalNumPacketsRec;
 	}
 
+	/**
+	 * @return
+	 */
 	public long getSumPacketsRec() {
 		return sumPacketsRec;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see cs455.overlay.wireformats.Event#getStatus()
+	 */
+	@Override
+	public int getStatus() {
+		return assignedNodeId;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see cs455.overlay.wireformats.Event#getType()
+	 */
+	@Override
+	public int getType() {
+		return type;
 	}
 
 	/**
@@ -57,8 +90,8 @@ public class OverlayNodeReportsTrafficSummary implements Event, Protocol {
 	 * @param totalNumPacketsRec
 	 * @param sumPacketsRec
 	 */
-	public OverlayNodeReportsTrafficSummary(int assignedNodeId, int totalSent, int totalRelayed, 
-			long sumSentData, int totalNumPacketsRec, long sumPacketsRec) {
+	public OverlayNodeReportsTrafficSummary(int assignedNodeId, int totalSent, int totalRelayed, long sumSentData,
+			int totalNumPacketsRec, long sumPacketsRec) {
 		this.assignedNodeId = assignedNodeId;
 		this.totalSent = totalSent;
 		this.totalRelayed = totalRelayed;
@@ -69,13 +102,14 @@ public class OverlayNodeReportsTrafficSummary implements Event, Protocol {
 
 	/**
 	 * constructor to unmarshall the bytes
+	 * 
 	 * @param data
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public OverlayNodeReportsTrafficSummary(byte[] data) throws IOException {
 		ByteArrayInputStream baInputStream = new ByteArrayInputStream(data);
 		DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
-		
+
 		type = din.readByte();
 		assignedNodeId = din.readInt();
 		totalSent = din.readInt();
@@ -83,22 +117,23 @@ public class OverlayNodeReportsTrafficSummary implements Event, Protocol {
 		sumSentData = din.readLong();
 		totalNumPacketsRec = din.readInt();
 		sumPacketsRec = din.readLong();
-		
+
 		baInputStream.close();
 		din.close();
-	
-		
+
 	}
-	
-	@Override
-	/**
+
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see cs455.overlay.wireformats.Event#getByte()
 	 */
-	public byte[] getByte() throws IOException{
+	@Override
+	public byte[] getByte() throws IOException {
 		byte[] marshalledBytes = null;
 		ByteArrayOutputStream baOutputStream = new ByteArrayOutputStream();
 		DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(baOutputStream));
-		
+
 		dout.writeByte(type);
 		dout.writeInt(assignedNodeId);
 		dout.writeInt(totalSent);
@@ -106,42 +141,26 @@ public class OverlayNodeReportsTrafficSummary implements Event, Protocol {
 		dout.writeLong(sumSentData);
 		dout.writeInt(totalNumPacketsRec);
 		dout.writeLong(sumPacketsRec);
-		
+
 		dout.flush();
 		marshalledBytes = baOutputStream.toByteArray();
-		
+
 		baOutputStream.close();
 		dout.close();
-		
+
 		return marshalledBytes;
 	}
 
-	@Override
-	/**
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see java.lang.Object#toString()
 	 */
-	public int getType() {
-		return type;
-	}
-	
 	@Override
-	/**
-	 *
-	 */
 	public String toString() {
-		return "\nbyte: Message Type; " + this.type +
-				"\nint: " + this.assignedNodeId + 
-				"\nint: " + this.totalSent +
-				"\nint: " + this.totalRelayed +
-				"\nlong: " + this.sumSentData +
-				"\nint: " + this.totalNumPacketsRec +
-				"\nlong: " + this.sumPacketsRec + "\n";
-	}
-
-	@Override
-	public int getStatus() {
-		// TODO Auto-generated method stub
-		return assignedNodeId;
+		return "\nbyte: Message Type; (OVERLAY_NODE_REPORTS_TRAFFIC_SUMMARY)\nint: " + this.assignedNodeId + "\nint: "
+				+ this.totalSent + "\nint: " + this.totalRelayed + "\nlong: " + this.sumSentData + "\nint: "
+				+ this.totalNumPacketsRec + "\nlong: " + this.sumPacketsRec + "\n";
 	}
 
 }

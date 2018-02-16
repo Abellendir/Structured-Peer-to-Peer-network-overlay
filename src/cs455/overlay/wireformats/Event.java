@@ -23,7 +23,6 @@ public interface Event {
 	int getType();
 	
 	/**
-	 * 
 	 * @return
 	 */
 	@Override

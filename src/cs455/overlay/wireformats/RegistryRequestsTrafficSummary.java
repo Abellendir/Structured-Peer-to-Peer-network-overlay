@@ -17,71 +17,80 @@ import java.io.IOException;
  *
  */
 public class RegistryRequestsTrafficSummary implements Event, Protocol {
-	
+
 	private int type = REGISTRY_REQUEST_TRAFFIC_SUMMARY;
 
 	/**
 	 * 
 	 */
 	public RegistryRequestsTrafficSummary() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
 	 * constructor to unmarshall the bytes
+	 * 
 	 * @param data
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public RegistryRequestsTrafficSummary(byte[] data) throws IOException {
 		ByteArrayInputStream baInputStream = new ByteArrayInputStream(data);
 		DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
-		
+
 		type = din.readByte();
-		
+
 		baInputStream.close();
 		din.close();
-		
+
 	}
 
-	@Override
-	/**
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see cs455.overlay.wireformats.Event#getByte()
 	 */
-	public byte[] getByte() throws IOException{
+	@Override
+	public byte[] getByte() throws IOException {
 		byte[] marshalledBytes = null;
 		ByteArrayOutputStream baOutputStream = new ByteArrayOutputStream();
 		DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(baOutputStream));
-		
+
 		dout.writeByte(type);
-		
+
 		dout.flush();
 		marshalledBytes = baOutputStream.toByteArray();
-		
+
 		baOutputStream.close();
 		dout.close();
 		return marshalledBytes;
 	}
 
-	@Override
-	/**
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see cs455.overlay.wireformats.Event#getType()
 	 */
+	@Override
 	public int getType() {
-		// TODO Auto-generated method stub
 		return type;
 	}
 
-	@Override
-	/**
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
-		return "\nbyte: " + this.type + "\n";
+		return "\nbyte: (REGISTRY_REQUESTS_TRAFFIC_SUMMARY)\n";
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see cs455.overlay.wireformats.Event#getStatus()
+	 */
 	@Override
 	public int getStatus() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 }

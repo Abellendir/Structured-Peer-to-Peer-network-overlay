@@ -37,21 +37,29 @@ import cs455.overlay.wireformats.RegistrySendsNodeManifest;
  */
 public class Registry implements Node {
 	
-	private boolean debug = true;
 	private final TCPConnectionsCache tcpConnectionsCache = TCPConnectionsCache.getInstance();
 	private final StatisticsCollectorAndDisplay statisticsCollector = new StatisticsCollectorAndDisplay();
 	private final ArrayList<Integer> randomizedIDs = new ArrayList<Integer>();
 	private int taskCompleteTracker;
 	private final RoutingTable registry = new RoutingTable();
 	
+	/**
+	 * @return
+	 */
 	private synchronized int getTaskCompleteTracker() {
 		return taskCompleteTracker;
 	}
 
+	/**
+	 * 
+	 */
 	private synchronized void incrementTaskCompleteTracker() {
 		this.taskCompleteTracker++;
 	}
 	
+	/**
+	 * 
+	 */
 	private synchronized void resetCounter() {
 		this.taskCompleteTracker = 0;
 	}
@@ -70,7 +78,7 @@ public class Registry implements Node {
 	}
 	
 	/**
-	 * 
+	 * Only accessed by Registry in constructor
 	 */
 	private void intitializeRandomArrayListOfIDs() {
 		for(int randID = 0; randID < 128; randID++) {
@@ -79,6 +87,9 @@ public class Registry implements Node {
 		Collections.shuffle(randomizedIDs);
 	}
 
+	/* (non-Javadoc)
+	 * @see cs455.overlay.node.Node#onEvent(cs455.overlay.wireformats.Event)
+	 */
 	@Override
 	public void onEvent(Event event) {
 		switch(event.getType()) {
@@ -86,7 +97,6 @@ public class Registry implements Node {
 		case 4: try {
 				registryDeregistersNode((OverlayNodeSendsDeregistration) event);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} break;
 		case 7: registryAcknowledgesOverlaySetup((NodeReportsOverlaySetupStatus) event); break;
@@ -118,6 +128,9 @@ public class Registry implements Node {
 		
 	}
 
+	/**
+	 * @param event
+	 */
 	private synchronized void overlayNodeReportsDone(OverlayNodeReportsTaskFinished event) {
 		//System.out.println(event);
 		incrementTaskCompleteTracker();
@@ -128,12 +141,14 @@ public class Registry implements Node {
 				registryRequestTrafficSummary();
 				resetCounter();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
 
+	/**
+	 * 
+	 */
 	private void registryRequestTrafficSummary() {
 		for(int i = 0; i < registry.getSize(); i++) {
 			RegistryRequestsTrafficSummary send = new RegistryRequestsTrafficSummary();
@@ -146,10 +161,17 @@ public class Registry implements Node {
 		}
 	}
 
+	/**
+	 * @param event
+	 */
 	private void registryAcknowledgesOverlaySetup(NodeReportsOverlaySetupStatus event) {
 		System.out.println(event);
 	}
 
+	/**
+	 * @param request
+	 * @throws IOException
+	 */
 	private void registryDeregistersNode(OverlayNodeSendsDeregistration request) throws IOException{
 		System.out.println(request);
 		int nodeID = request.getStatus();
@@ -175,7 +197,7 @@ public class Registry implements Node {
 		randomizedIDs.add(nodeID);
 		System.out.println(send);
 		conn.sendData(send.getByte());
-		System.out.println("Removed node "+ nodeID);
+		System.out.println("Removed node: "+ nodeID);
 	}
 	
 	/**
@@ -234,19 +256,31 @@ public class Registry implements Node {
 				try {
 					sendManifest(numberEntries, allNodes, entry, temp);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 		}
 		//ADD the calls to each node with the manifest response;
 	}
 
+	/**
+	 * @param numberEntries
+	 * @param allNodes
+	 * @param entry
+	 * @param temp
+	 * @throws IOException
+	 */
 	private void sendManifest(int numberEntries, int[] allNodes, RoutingEntry entry, RoutingTable temp) throws IOException{
 		RegistrySendsNodeManifest send = new RegistrySendsNodeManifest(entry,allNodes,numberEntries);
 		System.out.print(send);
 		entry.getConnection().sendData(send.getByte());
 	}
 	
+	/**
+	 * @param routingEntry
+	 * @param numberEntries
+	 * @param index
+	 * @return
+	 */
 	private RoutingTable createTableForEntry(RoutingEntry routingEntry, int numberEntries, int index) {
 		RoutingTable entryRoutingTable = new RoutingTable();
 		int size = registry.getSize();
@@ -297,6 +331,9 @@ public class Registry implements Node {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see cs455.overlay.node.Node#interactiveCommandEvent(java.lang.String[])
+	 */
 	@Override
 	public void interactiveCommandEvent(String[] command) {
 		String cmd = command[0];
@@ -319,6 +356,7 @@ public class Registry implements Node {
 									+ "\n\"list-routing-tables\"."); break;
 		}
 	}
+	
 	/**
 	 * 
 	 * @param args
@@ -338,10 +376,8 @@ public class Registry implements Node {
 			InteractiveCommandParser commandParser = new InteractiveCommandParser(registry);
 			new Thread(commandParser).start();
 		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

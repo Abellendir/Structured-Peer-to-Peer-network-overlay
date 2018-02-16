@@ -75,7 +75,7 @@ public class TCPConnectionsCache {
 	 * 
 	 * @return
 	 */
-	public int getSize() {
+	public synchronized int getSize() {
 		return tcpConnectionsCache.size();
 	}
 	
@@ -95,6 +95,9 @@ public class TCPConnectionsCache {
 		return registry;
 	}
 
+	/**
+	 * @param tcpConnection
+	 */
 	public synchronized void remove(TCPConnection tcpConnection) {
 		tcpConnectionsCache.remove(tcpConnection);
 	}

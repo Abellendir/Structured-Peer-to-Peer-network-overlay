@@ -7,10 +7,7 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -36,6 +33,9 @@ public class EventFactory implements Protocol,Runnable {
 	private EventFactory() {
 	}
 
+	/**
+	 * 
+	 */
 	private synchronized void setTermination() {
 		TERMINATE = true;
 	}
@@ -52,7 +52,6 @@ public class EventFactory implements Protocol,Runnable {
 		try {
 			buffer.put(message);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -115,6 +114,9 @@ public class EventFactory implements Protocol,Runnable {
 		return Arrays.equals(actual, expected);
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public void run() {
 		while(!TERMINATE) {

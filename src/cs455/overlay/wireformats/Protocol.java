@@ -22,6 +22,12 @@ public interface Protocol {
 	public static final int REGISTRY_REQUEST_TRAFFIC_SUMMARY = 11;
 	public static final int OVERLAY_NODE_REPORTS_TRAFFIC_SUMMARY = 12;
 	
+	/**
+	 * @param type
+	 * @param marshalledBytes
+	 * @return
+	 * @throws IOException
+	 */
 	public default Event getEvent(int type, byte[] marshalledBytes) throws IOException {
 		switch(type) {
 			case OVERLAY_NODE_SENDS_REGISTRATION:

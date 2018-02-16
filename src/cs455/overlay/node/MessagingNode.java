@@ -61,6 +61,9 @@ public class MessagingNode implements Node {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see cs455.overlay.node.Node#onEvent(cs455.overlay.wireformats.Event)
+	 */
 	@Override
 	public void onEvent(Event event) {
 		int type = event.getType();
@@ -89,6 +92,9 @@ public class MessagingNode implements Node {
 
 	}
 
+	/**
+	 * @param event
+	 */
 	private void overlayNodeSendsData(OverlayNodeSendsData event) {
 		if (event.getDestinationId() == this.nodeID) {
 			overlayNodeReceivesPayload(event);
@@ -119,24 +125,39 @@ public class MessagingNode implements Node {
 		}
 	}
 
+	/**
+	 * 
+	 */
 	private synchronized void incrementRelayed() {
 		relayedTracker++;
 	}
 
+	/**
+	 * @param event
+	 */
 	private void overlayNodeReceivesPayload(OverlayNodeSendsData event) {
 		//System.out.println(event);
 		incrementReceivedTracker();
 		incrementReceivedSum(event.getPayload());
 	}
 
+	/**
+	 * @param payload
+	 */
 	private synchronized void incrementReceivedSum(int payload) {
 		receiveSummation += payload;
 	}
 
+	/**
+	 * 
+	 */
 	private synchronized void incrementReceivedTracker() {
 		receiveTracker++;
 	}
 
+	/**
+	 * @param event
+	 */
 	private synchronized void registryRequestsTrafficSummary(RegistryRequestsTrafficSummary event) {
 		OverlayNodeReportsTrafficSummary send = new OverlayNodeReportsTrafficSummary(this.nodeID, this.sendTracker,
 				this.relayedTracker, this.sendSummation, this.receiveTracker, this.receiveSummation);
@@ -149,6 +170,9 @@ public class MessagingNode implements Node {
 		}
 	}
 
+	/**
+	 * 
+	 */
 	private void resetCounts() {
 		sendTracker = 0;
 		receiveTracker = 0;
@@ -157,6 +181,9 @@ public class MessagingNode implements Node {
 		receiveSummation = 0;
 	}
 
+	/**
+	 * @param event
+	 */
 	private void registryRequestsTaskInitiate(RegistryRequestsTaskInitiate event) {
 		//System.out.println(event);
 		int rounds = event.getStatus();
@@ -180,6 +207,9 @@ public class MessagingNode implements Node {
 		overlayNodeReportsTaskFinished();
 	}
 
+	/**
+	 * 
+	 */
 	private void overlayNodeReportsTaskFinished() {
 		TCPConnection conn = cache.getRegistry();
 		OverlayNodeReportsTaskFinished send = new OverlayNodeReportsTaskFinished(IP.length, IP,
@@ -203,10 +233,17 @@ public class MessagingNode implements Node {
 		conn.sendData(data.getByte());
 	}
 
+	/**
+	 * @param payload
+	 */
 	private synchronized void incrementSendSum(int payload) {
 		sendSummation += payload;
 	}
 
+	/**
+	 * @param destination
+	 * @return
+	 */
 	private int chooseRoutingTableEntry(int destination) {
 		int length = nodesInRoutingTable.length;
 		if (nodesInRoutingTable[0] == destination)
@@ -231,6 +268,9 @@ public class MessagingNode implements Node {
 		return index;
 	}
 
+	/**
+	 * @param event
+	 */
 	private void registrySendsNodeManifest(RegistrySendsNodeManifest event) {
 		//System.out.print(event);
 		int status = this.nodeID;
@@ -269,11 +309,17 @@ public class MessagingNode implements Node {
 		}
 	}
 
+	/**
+	 * @param event
+	 */
 	private void registryReportsDeregistrationStatus(RegistryReportsDeregistrationStatus event) {
 		System.out.println(event);
 
 	}
 
+	/**
+	 * @param event
+	 */
 	private void registryReportsRegistrationStatus(RegistryReportsRegistrationStatus event) {
 		this.nodeID = event.getStatus();
 		System.out.println(event);
@@ -354,6 +400,9 @@ public class MessagingNode implements Node {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see cs455.overlay.node.Node#interactiveCommandEvent(java.lang.String[])
+	 */
 	@Override
 	public void interactiveCommandEvent(String[] command) {
 		System.out.println("Not a valid command for Messaging Node:" + "\nValid commands are:" + "\n\t\"exit-overlay\""

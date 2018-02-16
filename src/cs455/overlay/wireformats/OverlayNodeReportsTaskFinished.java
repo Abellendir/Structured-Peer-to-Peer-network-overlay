@@ -18,12 +18,10 @@ import java.util.Arrays;
  *
  */
 public class OverlayNodeReportsTaskFinished implements Event, Protocol {
-	
+
 	private int type = OVERLAY_NODE_REPORTS_TASK_FINISHED;
-	private int length;
+	private int length, portNumber, nodeID;
 	private byte[] IP_address;
-	private int portNumber;
-	private int nodeID;
 
 	/**
 	 * 
@@ -41,70 +39,78 @@ public class OverlayNodeReportsTaskFinished implements Event, Protocol {
 
 	/**
 	 * constructor to unmarshall the bytes
+	 * 
 	 * @param data
 	 */
-	public OverlayNodeReportsTaskFinished(byte[] data) throws IOException{
+	public OverlayNodeReportsTaskFinished(byte[] data) throws IOException {
 		ByteArrayInputStream baInputStream = new ByteArrayInputStream(data);
 		DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
-		
+
 		type = din.readByte();
 		length = din.readByte();
 		IP_address = new byte[length];
-		din.readFully(IP_address,0,length);
+		din.readFully(IP_address, 0, length);
 		portNumber = din.readInt();
 		nodeID = din.readInt();
-		
+
 		baInputStream.close();
 		din.close();
-		
+
 	}
-	
-	@Override
-	/**
+
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see cs455.overlay.wireformats.Event#getByte()
 	 */
-	public byte[] getByte() throws IOException{
+	@Override
+	public byte[] getByte() throws IOException {
 		byte[] marshalledBytes = null;
 		ByteArrayOutputStream baOutputStream = new ByteArrayOutputStream();
 		DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(baOutputStream));
-		
+
 		dout.writeByte(type);
 		dout.writeByte(length);
-		dout.write(IP_address,0,length);
+		dout.write(IP_address, 0, length);
 		dout.writeInt(portNumber);
 		dout.writeInt(nodeID);
-		
+
 		dout.flush();
 		marshalledBytes = baOutputStream.toByteArray();
-		
+
 		baOutputStream.close();
 		dout.close();
 		return marshalledBytes;
 	}
 
-	@Override
-	/**
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see cs455.overlay.wireformats.Event#getType()
 	 */
+	@Override
 	public int getType() {
 		return type;
 	}
-	
-	@Override
-	/**
+
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
-		return "\nbyte: Message type; " + this.type 
-				+ "\nbyte: " + this.length 
-				+ "\nbyte[^^]: " + Arrays.toString(this.IP_address) 
-				+ "\nint: " + this.portNumber
-				+ "\nint: " + this.nodeID + "\n";
+		return "\nbyte: Message type; (OVERLAY_NODE_REPORTS_TASK_FINISHED)\nbyte: " + this.length + "\nbyte[^^]: "
+				+ Arrays.toString(this.IP_address) + "\nint: " + this.portNumber + "\nint: " + this.nodeID + "\n";
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see cs455.overlay.wireformats.Event#getStatus()
+	 */
 	@Override
 	public int getStatus() {
-		// TODO Auto-generated method stub
 		return nodeID;
 	}
 }

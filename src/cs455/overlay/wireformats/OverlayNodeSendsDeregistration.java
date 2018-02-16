@@ -17,16 +17,11 @@ import java.util.Arrays;
  * @author Adam Bellendir
  *
  */
-public class OverlayNodeSendsDeregistration implements Event , Protocol {
-	
+public class OverlayNodeSendsDeregistration implements Event, Protocol {
+
 	private int type = OVERLAY_NODE_SENDS_DEREGISTRATION;
-	private int length;
-	private byte[] IP_address;
-	private int portNumber;
-	private int nodeID;
-	private int status;
-	private int socketPort;
-	private byte[] IP_socketAddress;
+	private int length, portNumber, nodeID, status, socketPort;
+	private byte[] IP_address, IP_socketAddress;
 
 	/**
 	 * 
@@ -40,44 +35,45 @@ public class OverlayNodeSendsDeregistration implements Event , Protocol {
 
 	/**
 	 * constructor to unmarshall the bytes
+	 * 
 	 * @param data
 	 */
-	public OverlayNodeSendsDeregistration(byte[] data) throws IOException{
+	public OverlayNodeSendsDeregistration(byte[] data) throws IOException {
 		ByteArrayInputStream baInputStream = new ByteArrayInputStream(data);
 		DataInputStream din = new DataInputStream(new BufferedInputStream(baInputStream));
-		
+
 		type = din.readByte();
 		length = din.readByte();
 		IP_address = new byte[length];
-		din.readFully(IP_address,0,length);
+		din.readFully(IP_address, 0, length);
 		portNumber = din.readInt();
 		nodeID = din.readInt();
 		status = nodeID;
 		baInputStream.close();
 		din.close();
 	}
-	
+
 	@Override
 	/**
 	 * 
 	 */
-	public byte[] getByte() throws IOException{
+	public byte[] getByte() throws IOException {
 		byte[] marshalledBytes = null;
 		ByteArrayOutputStream baOutputStream = new ByteArrayOutputStream();
 		DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(baOutputStream));
-		
+
 		dout.writeByte(type);
 		dout.writeByte(length);
-		dout.write(IP_address,0,length);
+		dout.write(IP_address, 0, length);
 		dout.writeInt(portNumber);
 		dout.writeInt(nodeID);
 		dout.flush();
-		
+
 		marshalledBytes = baOutputStream.toByteArray();
-		
+
 		baOutputStream.close();
 		dout.close();
-		
+
 		return marshalledBytes;
 	}
 
@@ -94,11 +90,8 @@ public class OverlayNodeSendsDeregistration implements Event , Protocol {
 	 * 
 	 */
 	public String toString() {
-		return "\nbyte: Message type; " + this.type +
-				"\nbyte: " + this.length +
-				"\nbyte[^^]: " + Arrays.toString(this.IP_address) +
-				"\nint: " + this.portNumber +
-				"\nint: " + this.nodeID + "\n";
+		return "\nbyte: Message type; (OVERLAY_NODE_SENDS_DEREGISTRATION)\nbyte: " + this.length + "\nbyte[^^]: "
+				+ Arrays.toString(this.IP_address) + "\nint: " + this.portNumber + "\nint: " + this.nodeID + "\n";
 	}
 
 	@Override
@@ -114,6 +107,10 @@ public class OverlayNodeSendsDeregistration implements Event , Protocol {
 		return IP_address;
 	}
 
+	public byte[] getSocketAddress() {
+		return IP_socketAddress;
+	}
+
 	public int getPortNumber() {
 		return portNumber;
 	}
@@ -121,7 +118,7 @@ public class OverlayNodeSendsDeregistration implements Event , Protocol {
 	public int getNodeID() {
 		return nodeID;
 	}
-	
+
 	public void setStatus() {
 		this.status = -1;
 	}

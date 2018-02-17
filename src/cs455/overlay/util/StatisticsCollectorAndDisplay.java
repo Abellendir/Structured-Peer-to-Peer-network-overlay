@@ -39,6 +39,8 @@ public class StatisticsCollectorAndDisplay {
 		this.sumDataReceived+=sumDataReceived;
 	}
 	
+	public synchronized void addData() {}
+	
 	/**
 	 * 
 	 */

@@ -43,17 +43,13 @@ public class MessagingNode implements Node {
 	private TCPConnectionsCache cache = TCPConnectionsCache.getInstance();
 	private int[] allNodes;
 	private final byte[] IP;
-	private int portNumber;
-	private int sendTracker = 0;
-	private int receiveTracker = 0;
-	private int relayedTracker = 0;
-	private long sendSummation = 0;
-	private long receiveSummation = 0;
+	private int portNumber, sendTracker, receiveTracker;
+	private int relayedTracker, sendSummation, receiveSummation;
 
 	/**
 	 * 
 	 */
-	public MessagingNode(byte[] IP,int port) {
+	public MessagingNode(byte[] IP, int port) {
 		this.IP = IP;
 		this.portNumber = port;
 		System.out.println("Initialized address in bytes:" + Arrays.toString(IP));
@@ -61,7 +57,9 @@ public class MessagingNode implements Node {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see cs455.overlay.node.Node#onEvent(cs455.overlay.wireformats.Event)
 	 */
 	@Override
@@ -119,7 +117,6 @@ public class MessagingNode implements Node {
 				relayPayload(trace, destination, source, payload, index);
 				incrementRelayed();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -136,7 +133,7 @@ public class MessagingNode implements Node {
 	 * @param event
 	 */
 	private void overlayNodeReceivesPayload(OverlayNodeSendsData event) {
-		//System.out.println(event);
+		// System.out.println(event);
 		incrementReceivedTracker();
 		incrementReceivedSum(event.getPayload());
 	}
@@ -185,7 +182,7 @@ public class MessagingNode implements Node {
 	 * @param event
 	 */
 	private void registryRequestsTaskInitiate(RegistryRequestsTaskInitiate event) {
-		//System.out.println(event);
+		// System.out.println(event);
 		int rounds = event.getStatus();
 		Random rand = new Random();
 		int[] trace = null;
@@ -212,8 +209,7 @@ public class MessagingNode implements Node {
 	 */
 	private void overlayNodeReportsTaskFinished() {
 		TCPConnection conn = cache.getRegistry();
-		OverlayNodeReportsTaskFinished send = new OverlayNodeReportsTaskFinished(IP.length, IP,
-				portNumber, nodeID);
+		OverlayNodeReportsTaskFinished send = new OverlayNodeReportsTaskFinished(IP.length, IP, portNumber, nodeID);
 		try {
 			conn.sendData(send.getByte());
 		} catch (IOException e) {
@@ -272,7 +268,7 @@ public class MessagingNode implements Node {
 	 * @param event
 	 */
 	private void registrySendsNodeManifest(RegistrySendsNodeManifest event) {
-		//System.out.print(event);
+		// System.out.print(event);
 		int status = this.nodeID;
 		nodesInRoutingTable = event.getNodeID();
 		byte[][] IP = event.getIP_addresses();
@@ -344,11 +340,10 @@ public class MessagingNode implements Node {
 		try {
 			cache.getRegistry().sendData(send.getByte());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param hostName
@@ -361,9 +356,8 @@ public class MessagingNode implements Node {
 		Thread registry = new Thread(registryConnection);
 		registry.start();
 		cache.addRegistry(registryConnection);
-		OverlayNodeSendsRegistration registration = new OverlayNodeSendsRegistration(IP.length, IP,
-				this.portNumber);
-		//System.out.println(registration);
+		OverlayNodeSendsRegistration registration = new OverlayNodeSendsRegistration(IP.length, IP, this.portNumber);
+		// System.out.println(registration);
 		registryConnection.sendData(registration.getByte());
 	}
 
@@ -400,7 +394,9 @@ public class MessagingNode implements Node {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see cs455.overlay.node.Node#interactiveCommandEvent(java.lang.String[])
 	 */
 	@Override
@@ -424,7 +420,7 @@ public class MessagingNode implements Node {
 			TCPServerThread serverThread = new TCPServerThread(serverSocket);
 			new Thread(serverThread).start();
 			cache.addServerConnection(serverThread);
-			MessagingNode mNode = new MessagingNode(IP,serverSocket.getLocalPort());
+			MessagingNode mNode = new MessagingNode(IP, serverSocket.getLocalPort());
 			mNode.registerWithRegistry(args[0], Integer.parseInt(args[1]));
 			eventFactory.giveNode(mNode);
 			new Thread(eventFactory).start();
@@ -437,7 +433,7 @@ public class MessagingNode implements Node {
 		} catch (IOException e1) {
 			System.out.println("Unable to open socket");
 			e1.printStackTrace();
-			System.exit(0);         
+			System.exit(0);
 		}
 	}
 

@@ -10,11 +10,8 @@ public class StatisticsCollectorAndDisplay {
 	
 	private ArrayList<EntryStats> entryStats = new ArrayList<>();
 	
-	int sent = 0;
-	int received = 0;
-	int relayed = 0;
-	long sumDataSent = 0;
-	long sumDataReceived = 0;
+	int sent, received, relayed;
+	long sumDataSent, sumDataReceived;
 	
 	/**
 	 * 

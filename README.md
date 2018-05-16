@@ -22,13 +22,15 @@ to run "start 100,000" and it will execute just fine.
 |Registry| handles registration of nodes and initiating the primary task of tells the messaging nodes who to talk to and when to start  |
 |MessagingNode|handles that task of sending messages to other messagingNodes in the system. |
 	
-###The routing package contains 
+###The routing package contains
+
 |Classes|Description|
 |:-------|:-----------|
 |RoutingEntry| contains information about specifc connections and ids connected to the registry or the nodes that a messaging node can sender messages to|  
 |RoutingTable| contains a list of all nodes in the registry and is stored in RoutingEntry as the routing table for each node in the registry.  |
 	
 ###The transport package contains 
+
 |Class|Description|
 |:-------|:-----------| 
 |IncomingMessage| a Message class for communications to evenFactory|  
@@ -36,7 +38,8 @@ to run "start 100,000" and it will execute just fine.
 |TCPConnectionsCache| holds every connection that is made to the respective node that connects to the messaging node|  
 |TCPServerThread| holds the serverSocket and allows a node to initiate communication with it|.  
 	
-###The util package contains 
+###The util package contains
+
 |Class|Description|
 |:-------|:-----------| 
 |EntryStats| a class that contains the statitics of every messaging node used only in registry to check the sums and print info about the completion of the task|  
@@ -44,7 +47,9 @@ to run "start 100,000" and it will execute just fine.
 |StatisticsCollectorAndDisplay| which holds all the sums for the task and stores the EntryStats for each node|  
 
 ###The wireformats package contains all the message types that could be sent or received by the registry and messager nodes 
+
 Message WireFrames to properly format a message to be sent 
+
 |Class|Description|
 |:-----|:-----------|  
 |NodeReportsOverlaySetupStatus||  

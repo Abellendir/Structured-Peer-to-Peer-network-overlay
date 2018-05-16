@@ -7,12 +7,13 @@ messages it will initiate the task, but once each node sends it's messages no me
 To make matters more confusing if you start the task at 50000 with a overlay of 3 or 4 and incremently work your way up at 10,000 at a time you will be able
 to run "start 100,000" and it will execute just fine.
 
-## This project contains 5 packages
-	-node
-	-routing
-	-transport
-	-util
-	-wireformats
+## This project contains 5 packages  
+
+[node](https://github.com/Abellendir/Structured-Peer-to-Peer-network-overlay/blob/master/README.md#the-node-packages-contains), 
+[routing](https://github.com/Abellendir/Structured-Peer-to-Peer-network-overlay/blob/master/README.md#the-routing-package-contains), 
+[transport](https://github.com/Abellendir/Structured-Peer-to-Peer-network-overlay/blob/master/README.md#the-transport-package-contains), 
+[util](https://github.com/Abellendir/Structured-Peer-to-Peer-network-overlay/blob/master/README.md#the-util-package-contains), 
+[wireformats](https://github.com/Abellendir/Structured-Peer-to-Peer-network-overlay/blob/master/README.md#the-wireformats-package-contains-all-the-message-types-that-could-be-sent-or-received-by-the-registry-and-messager-nodes)
 	
 ### The node packages contains
 	

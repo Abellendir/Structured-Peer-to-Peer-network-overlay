@@ -63,7 +63,7 @@ Message WireFrames to properly format a message to be sent
 |RegistryRequestsTaskInitiate||  
 |RegistryRequestsTrafficSummary||  
 |RegistrySendsNodeManifest  ||
-|Event Interface for all the nodes containing getByte getType and toString for debuging||    	 
+|Event| Interface for all the nodes containing getByte getType and toString for debuging|    	 
 
 Classes that determine what a message is  
 

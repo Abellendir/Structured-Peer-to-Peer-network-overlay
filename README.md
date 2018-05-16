@@ -62,13 +62,13 @@ Message WireFrames to properly format a message to be sent
 |RegistryReportsRegistrationStatus  ||
 |RegistryRequestsTaskInitiate||  
 |RegistryRequestsTrafficSummary||  
-|RegistrySendsNodeManifest  ||
-|Event| Interface for all the nodes containing getByte getType and toString for debuging|    	 
+|RegistrySendsNodeManifest  ||  	 
 
 Classes that determine what a message is  
 
 |Class|Description|
 |:-----|:-----------| 
-|EventFactory builds the message || 
-|Protocol determines message type and returns a instance of it||   
+|Event| Interface for all the nodes containing getByte getType and toString for debuging|  
+|EventFactory| builds the message |
+|Protocol| determines message type and returns a instance of it|
 	

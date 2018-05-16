@@ -65,7 +65,8 @@ Message WireFrames to properly format a message to be sent
 |RegistrySendsNodeManifest  ||
 |Event Interface for all the nodes containing getByte getType and toString for debuging||    	 
 
-Classes that determine what a message is 
+Classes that determine what a message is  
+
 |Class|Description|
 |:-----|:-----------| 
 |EventFactory builds the message || 

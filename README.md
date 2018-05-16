@@ -1,7 +1,7 @@
 # Structured-Peer-to-Peer-network-overlay
 All commands that are prescribed by the assignment are implemented and function for the interactiveCommandParser's perspective.
 
-Currently there is certainly an implementation failure in this assignment and concurrentencie issue when starting the task or initiating 
+Currently there is certainly an implementation failure in this and concurrentencie issue when starting the task or initiating 
 task. This Code will initiate a task just find with a overlay size of 4 and 50000 messages. However if you attempt to do an overlay of 4 or 3 with say 100,000
 messages it will initiate the task, but once each node sends it's messages no messages are received by any of the nodes.
 To make matters more confusing if you start the task at 50000 with a overlay of 3 or 4 and incremently work your way up at 10,000 at a time you will be able

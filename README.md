@@ -1,6 +1,6 @@
 # Structured-Peer-to-Peer-network-overlay
 Very simple network overlay based on a simplified distributed hash table  
-Currently doesn't support a messaging node to drop out of the overlay while communications are happening. Nor does it handle a messaging node joining the overlay during communications.  
+Currently doesn't support a messaging node droping out of the overlay while communications are happening. Nor does it handle a messaging node joining the overlay during communications.  
 
 Currently there is certainly an implementation failure in this and concurrentencie issue when starting the task or initiating 
 task. This Code will initiate a task just find with a overlay size of 4 and 50000 messages. However if you attempt to do an overlay of 4 or 3 with say 100,000
